@@ -1,2 +1,2 @@
 # compiler
-The project of cmm homework.
+The project of "Principles and Techniques of Compiler" homework.
