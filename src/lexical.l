@@ -3,7 +3,8 @@ letter [a-zA-Z_]
 space [ \t\n]
 numHex 0[xX][0-9a-fA-F]+
 numOct 0[0-7]+
-numDec [0-9]+
+numDec 0|([1-9]{digit}*)
+float {digit}+\.{digit}+
 %%
 {digit}+ { printf("Integer value %d\n", atoi(yytext)); }
 {letter}[{letter}{digit}]* { printf("Id name %s\n", yytext); }
