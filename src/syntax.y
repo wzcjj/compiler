@@ -25,4 +25,12 @@ ExtDef : Specifier ExtDecList SEMI {}
        | Specifier FunDec CompSt {};
 ExtDecList : VarDec {}
            | VarDec COMMA ExtDecList {};
+/* Specifiers */
+Specifier : TYPE {}
+          | StructSpecifier {};
+StructSpecifier : STRUCT OptTag LC DefList RC {}
+                | STRUCT Tag {};
+OptTag : {}
+       | ID {};
+Tag : ID {};
 %%
