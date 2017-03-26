@@ -1,6 +1,10 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#define handle(token) \
+do {\
+    printf("%s (%d)\n", #token, yylineno);\
+} while (0)
 %}
 %token INT FLOAT ID
 %token ASSIGNOP
@@ -16,49 +20,67 @@
 %token COMMA SEMI
 %%
 /* High-level Definitions */
-Program : ExtDefList {}
+Program : ExtDefList { handle(Program); }
         ;
 ExtDefList : {}
-           | ExtDef ExtDefList {};
+           | ExtDef ExtDefList {}
+           ;
 ExtDef : Specifier ExtDecList SEMI {}
        | Specifier SEMI {}
-       | Specifier FunDec CompSt {};
+       | Specifier FunDec CompSt {}
+       ;
 ExtDecList : VarDec {}
-           | VarDec COMMA ExtDecList {};
+           | VarDec COMMA ExtDecList {}
+           ;
 /* Specifiers */
 Specifier : TYPE {}
-          | StructSpecifier {};
+          | StructSpecifier {}
+          ;
 StructSpecifier : STRUCT OptTag LC DefList RC {}
-                | STRUCT Tag {};
+                | STRUCT Tag {}
+                ;
 OptTag : {}
-       | ID {};
-Tag : ID {};
+       | ID {}
+       ;
+Tag : ID {}
+    ;
 /* Declarators */
 VarDec : ID {}
-       | VarDec LB INT RB {};
+       | VarDec LB INT RB {}
+       ;
 FunDec : ID LP VarList RP {}
-       | ID LP RP {};
+       | ID LP RP {}
+       ;
 VarList : ParamDec COMMA VarList {}
-        | ParamDec {};
-ParamDec : Specifier VarDec {};
+        | ParamDec {}
+        ;
+ParamDec : Specifier VarDec {}
+         ;
 /* Statements */
-CompSt : LC DefList StmtList RC {};
+CompSt : LC DefList StmtList RC {}
+       ;
 StmtList : {}
-         | Stmt StmtList {};
+         | Stmt StmtList {}
+         ;
 Stmt : Exp SEMI {}
      | CompSt {}
      | RETURN Exp SEMI {}
      | IF LP Exp RP Stmt {}
      | IF LP Exp RP Stmt ELSE Stmt {}
-     | WHILE LP Exp RP Stmt {};
+     | WHILE LP Exp RP Stmt {}
+     ;
 /* Local Definitions */
 DefList : {}
-        | Def DefList {};
-Def : Specifier DecList SEMI {};
+        | Def DefList {}
+        ;
+Def : Specifier DecList SEMI {}
+    ;
 DecList : Dec {}
-        | Dec COMMA DecList {};
+        | Dec COMMA DecList {}
+        ;
 Dec : VarDec {}
-    | VarDec ASSIGNOP Exp {};
+    | VarDec ASSIGNOP Exp {}
+    ;
 /* Expressions */
 Exp : Exp ASSIGNOP Exp {}
     | Exp AND Exp {}
@@ -77,7 +99,16 @@ Exp : Exp ASSIGNOP Exp {}
     | Exp DOT ID {}
     | ID {}
     | INT {}
-    | FLOAT {};
+    | FLOAT {}
+    ;
 Args : Exp COMMA Args {}
-     | Exp {};
+     | Exp {}
+     ;
 %%
+#include "lex.yy.c"
+int main() {
+    yyparse();
+}
+void yyerror(char* msg) {
+    printf("Error type B at Line %d: %s.\n", yylineno, msg);
+}

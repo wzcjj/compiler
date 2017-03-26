@@ -40,4 +40,6 @@ return { printf("RETURN\n"); handle(RETURN); }
 if { printf("IF\n"); handle(IF); }
 else { printf("ELSE\n"); handle(ELSE); }
 while { printf("WHILE\n"); handle(WHILE); }
+. { printf("Error type A at line %d: Mysterious character \"%s\".\n", 
+           yylineno, yytext); }
 %%
