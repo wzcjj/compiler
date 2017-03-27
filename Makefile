@@ -1,32 +1,49 @@
-# 编译器设定和编译选项
 CC = gcc
-FLEX = flex
-BISON = bison
 CFLAGS = -std=c99
-# 编译目标:src目录下的所有.c文件
-CFILES = $(shell find ./ -name "*.c")
-OBJS = $(CFILES:.c=.o)
-LFILE = $(shell find ./ -name "*.l")
-YFILE = $(shell find ./ -name "*.y")
-LFC = $(shell find ./ -name "*.l" | sed s/[^/]*\\.l/lex.yy.c/)
-YFC = $(shell find ./ -name "*.y" | sed s/[^/]*\\.y/syntax.tab.c/)
-LFO = $(LFC:.c=.o)
+SRC_DIR = src
+GEN_DIR = generate
+BIN_DIR = bin
+OBJ_DIR = obj
+CFILES = $(shell find $(SRC_DIR) -name "*.c")
+DFILES = $(shell find . -name "*.d")
+OBJS = $(CFILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+LFILE = $(SRC_DIR)/lexical.l
+YFILE = $(SRC_DIR)/syntax.y
+LFC = $(GEN_DIR)/lex.yy.c
+YFC = $(GEN_DIR)/syntax.tab.c
+LFO = $(LFC:.c=,o)
 YFO = $(YFC:.c=.o)
-parser: syntax $(filter-out $(LFO),$(OBJS))
-	$(CC) -o parser $(filter-out $(LFO),$(OBJS)) -ll –ly
-syntax: lexical syntax-c
+TARGET = $(BIN_DIR)/parser
+
+$(TARGET): $(OBJS) $(LFO) $(YFO)
+	$(CC) $(OBJS) $(LFO) $(YFO) $(CFLAGS) -ll -o $(TARGET)
+
+$(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir $(OBJ_DIR)
+	$(CC) -c $(CFILES) -o $(OBJ_DIR)
+
+-include $(DFILES)
+
+$(LFO): $(LFC)
+	$(CC) -c $(LFC) -o $(LFO)
+
+$(YFO): $(YFC)
 	$(CC) -c $(YFC) -o $(YFO)
-lexical: $(LFILE)
-	$(FLEX) -o $(LFC) $(LFILE)
-syntax-c: $(YFILE)
-	$(BISON) -o $(YFC) -d -v $(YFILE)
--include $(patsubst %.o, %.d, $(OBJS))
-# 定义的一些伪目标
-.PHONY: clean test
-test:
-	./parser test.cmm
+
+$(LFC): $(LFILE)
+	@mkdir $(GEN_DIR)
+	flex $(LFILE) -o $(LFC)
+
+$(YFC): $(YFILE)
+	@mkdir $(GEN_DIR)
+	bison -d -v $(YFILE) -o $(YFC)
+
+.PHONY: run clean
+
+run: $(TARGET)
+	$(TARGET) $(INPUT)
+
 clean:
-	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
-	rm -f $(OBJS) $(OBJS:.o=.d)
-	rm -f $(LFC) $(YFC) $(YFC:.c=.h)
-	rm -f *~
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR)
+
+

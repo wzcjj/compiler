@@ -1,10 +1,11 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#define handle(token) \
+#define handle1(token) \
 do {\
-    printf("%s (%d)\n", #token, yylineno);\
+    printf("%s ()\n", #token);\
 } while (0)
+void yyerror(char*);
 %}
 %token INT FLOAT ID
 %token ASSIGNOP
@@ -20,7 +21,7 @@ do {\
 %token COMMA SEMI
 %%
 /* High-level Definitions */
-Program : ExtDefList { handle(Program); }
+Program : ExtDefList { handle1(Program); }
         ;
 ExtDefList : {}
            | ExtDef ExtDefList {}

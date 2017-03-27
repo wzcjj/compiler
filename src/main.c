@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 extern FILE* yyin;
 int main(int argc, char** argv) {
     if (argc > 1) {
@@ -10,3 +10,4 @@ int main(int argc, char** argv) {
     while (yylex() != 0);
     return 0;
 }
+*/

@@ -1,6 +1,7 @@
 %{
+//#include "common.h"
 #include<stdio.h>
-#define handle(token) do { return token; }while(0)
+#define handle(token) do { /*return token;*/ }while(0)
 %}
 digit [0-9]
 letter [a-zA-Z_]
@@ -8,7 +9,7 @@ space [ \t\n]
 numHex 0[xX][0-9a-fA-F]+
 numOct 0[0-7]+
 numDec 0|([1-9]{digit}*)
-id {letter}[{letter}{digit}]* 
+id {letter}[{letter}{digit}]*
 num {numHex}|{numOct}|{numDec}
 floatNormal {digit}+\.{digit}+
 floatSci (({digit}*\.?{digit}+)|({digit}+\.))[eE][+-]?{digit}+
