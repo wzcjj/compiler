@@ -11,7 +11,7 @@ LFILE = $(SRC_DIR)/lexical.l
 YFILE = $(SRC_DIR)/syntax.y
 LFC = $(GEN_DIR)/lex.yy.c
 YFC = $(GEN_DIR)/syntax.tab.c
-LFO = $(LFC:.c=,o)
+LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
 
@@ -19,8 +19,8 @@ $(TARGET): $(OBJS) $(LFO) $(YFO)
 	$(CC) $(OBJS) $(LFO) $(YFO) $(CFLAGS) -ll -o $(TARGET)
 
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir $(OBJ_DIR)
-	$(CC) -c $(CFILES) -o $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) -c $< -o $@
 
 -include $(DFILES)
 
@@ -31,12 +31,12 @@ $(YFO): $(YFC)
 	$(CC) -c $(YFC) -o $(YFO)
 
 $(LFC): $(LFILE)
-	@mkdir $(GEN_DIR)
-	flex $(LFILE) -o $(LFC)
+	@mkdir -p $(GEN_DIR)
+	flex -o $(LFC) $(LFILE)
 
 $(YFC): $(YFILE)
-	@mkdir $(GEN_DIR)
-	bison -d -v $(YFILE) -o $(YFC)
+	@mkdir -p $(GEN_DIR)
+	bison -o $(YFC) -d -v $(YFILE)
 
 .PHONY: run clean
 
