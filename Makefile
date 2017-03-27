@@ -14,9 +14,11 @@ YFC = $(GEN_DIR)/syntax.tab.c
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
+INPUT = testcase/1.1.c
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
-	$(CC) $(OBJS) $(LFO) $(YFO) $(CFLAGS) -ll -o $(TARGET)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(OBJS) $(LFO) $(CFLAGS) -ll -ly -o $(TARGET)
 
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
