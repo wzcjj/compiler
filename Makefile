@@ -1,9 +1,10 @@
 CC = gcc
-CFLAGS = -std=c99
+CFLAGS = -std=c99 -I $(LIB_DIR)
 SRC_DIR = src
 GEN_DIR = generate
 BIN_DIR = bin
 OBJ_DIR = obj
+LIB_DIR = include
 CFILES = $(shell find $(SRC_DIR) -name "*.c")
 DFILES = $(shell find . -name "*.d")
 OBJS = $(CFILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -18,7 +19,7 @@ INPUT = testcase/1.1.c
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(OBJS) $(LFO) $(CFLAGS) -ll -ly -o $(TARGET)
+	$(CC) $(OBJS) $(YFO) $(CFLAGS) -ll -ly -o $(TARGET)
 
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
@@ -27,16 +28,16 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 -include $(DFILES)
 
 $(LFO): $(LFC)
-	$(CC) -c $(LFC) -o $(LFO)
+	$(CC) -c $(LFC) -o $(LFO) $(CFLAGS)
 
 $(YFO): $(YFC)
-	$(CC) -c $(YFC) -o $(YFO)
+	$(CC) -c $(YFC) -o $(YFO) $(CFLAGS)
 
 $(LFC): $(LFILE)
 	@mkdir -p $(GEN_DIR)
 	flex -o $(LFC) $(LFILE)
 
-$(YFC): $(YFILE)
+$(YFC): $(YFILE) $(LFC)
 	@mkdir -p $(GEN_DIR)
 	bison -o $(YFC) -d -v $(YFILE)
 

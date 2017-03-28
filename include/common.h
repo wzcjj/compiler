@@ -5,7 +5,9 @@ enum {
     INT, ID, SEMI, COMMA, ASSIGNOP,
     RELOP, PLUS, MINUS, STAR, DIV,
     AND, OR, DOT, TYPE, LP,
-    RP, LB, RB, LC, RC
+    RP, LB, RB, LC, RC,
+    STRUCT, RETURN, IF, ELSE, WHILE,
+    NOT
 };
 
 #endif
