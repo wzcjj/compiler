@@ -16,6 +16,7 @@ LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
 INPUT = testcase/1.1.c
+OUTPUT = output.txt
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
 	@mkdir -p $(BIN_DIR)

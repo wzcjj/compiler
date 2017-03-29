@@ -12,14 +12,12 @@ space [ \t\n]
 numHex 0[xX][0-9a-fA-F]+
 numOct 0[0-7]+
 numDec 0|([1-9]{digit}*)
-id {letter}[{letter}{digit}]*
+id {letter}({letter}|{digit})*
 num {numHex}|{numOct}|{numDec}
 floatNormal {digit}+\.{digit}+
 floatSci (({digit}*\.?{digit}+)|({digit}+\.))[eE][+-]?{digit}+
 float {floatNormal}|{floatSci}
 %%
-{num} { printf("Integer value %d\n", atoi(yytext)); handle(INT); }
-{id} { printf("Id name %s\n", yytext); handle(ID); }
 ; { printf("SEMI\n"); handle(SEMI); }
 , { printf("COMMA\n"); handle(COMMA); }
 = { printf("ASSIGNOP\n"); handle(ASSIGNOP); }
@@ -44,6 +42,9 @@ return { printf("RETURN\n"); handle(RETURN); }
 if { printf("IF\n"); handle(IF); }
 else { printf("ELSE\n"); handle(ELSE); }
 while { printf("WHILE\n"); handle(WHILE); }
+{num} { printf("Integer value: %d\n", atoi(yytext)); handle(INT); }
+{id} { printf("Id name: %s\n", yytext); handle(ID); }
+{space} {}
 . { printf("Error type A at line %d: Mysterious character \"%s\".\n", 
            yylineno, yytext); }
 %%
