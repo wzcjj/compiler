@@ -1,6 +1,8 @@
 #ifndef COMPILER_COMMON_H
 #define COMPILER_COMMON_H
 
+char *toArray(char *);
+
 /*enum {
     INT, ID, SEMI, COMMA, ASSIGNOP,
     RELOP, PLUS, MINUS, STAR, DIV,

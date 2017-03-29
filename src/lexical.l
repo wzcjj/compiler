@@ -1,7 +1,10 @@
 %{
 #include "common.h"
-#include<stdio.h>
-#define handle(token) do { /*return token;*/ }while(0)
+#include <stdio.h>
+#include "syntax.tab.h"
+#define handle(token) do { \
+    return token; \
+}while(0)
 %}
 digit [0-9]
 letter [a-zA-Z_]

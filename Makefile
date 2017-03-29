@@ -33,11 +33,11 @@ $(LFO): $(LFC)
 $(YFO): $(YFC)
 	$(CC) -c $(YFC) -o $(YFO) $(CFLAGS)
 
-$(LFC): $(LFILE)
+$(LFC): $(LFILE) $(YFC)
 	@mkdir -p $(GEN_DIR)
 	flex -o $(LFC) $(LFILE)
 
-$(YFC): $(YFILE) $(LFC)
+$(YFC): $(YFILE)
 	@mkdir -p $(GEN_DIR)
 	bison -o $(YFC) -d -v $(YFILE)
 

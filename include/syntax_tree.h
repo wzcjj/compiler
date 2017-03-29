@@ -7,6 +7,7 @@ typedef struct TreeNode {
         int intval;
         float floatval;
     };
+    char *text;
 };
 
 extern TreeNode *root;
