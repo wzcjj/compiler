@@ -45,7 +45,7 @@ $(YFC): $(YFILE)
 .PHONY: run clean
 
 run: $(TARGET)
-	$(TARGET) $(INPUT)
+	$(TARGET) $(INPUT) $(OUTPUT)
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR)
