@@ -1,5 +1,5 @@
 %{
-//#include "common.h"
+#include "common.h"
 #include<stdio.h>
 #define handle(token) do { /*return token;*/ }while(0)
 %}
