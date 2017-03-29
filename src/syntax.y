@@ -107,9 +107,6 @@ Args : Exp COMMA Args {}
      ;
 %%
 #include "lex.yy.c"
-int main() {
-    yyparse();
-}
 void yyerror(char* msg) {
     printf("Error type B at Line %d: %s.\n", yylineno, msg);
 }
