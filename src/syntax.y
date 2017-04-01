@@ -1,4 +1,5 @@
 %{
+#include "common.h"
 #include <stdio.h>
 #include <string.h>
 #include "syntax_tree.h"
@@ -14,7 +15,8 @@ do {\
         if (i == 1) (*yyval).lineno = (*p).lineno; \
         if (p != NULL) treeAddChild(yyval, p); \
     } \
-    printf("%s (%d)\n", yytname[YYNTOKENS + type], (*yyval).lineno); \
+    (*yyval).name = yytname[YYNTOKENS + type]; \
+    /*printf("%s (%d)\n", yytname[YYNTOKENS + type], (*yyval).lineno);*/ \
 } while (0)
 void yyerror(char*);
 %}
@@ -32,7 +34,7 @@ void yyerror(char*);
 %token COMMA SEMI
 %%
 /* High-level Definitions */
-Program : ExtDefList { handle1(1); }
+Program : ExtDefList { handle1(1); root = $$; }
         ;
 ExtDefList : ExtDef ExtDefList { handle1(2); }
            | { $$ = NULL; }

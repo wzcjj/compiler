@@ -1,12 +1,15 @@
 %{
 #include "common.h"
 #include <stdio.h>
+#include <string.h>
 #include "syntax_tree.h"
 #define YYSTYPE TreeNode*
 #include "syntax.tab.h"
 #define handle(token) do { \
     yylval = newToken(token); \
     (*yylval).name = toArray(#token); \
+    if (token == INT) (*yylval).intval = atoi(yytext); \
+    else if (token == FLOAT) (*yylval).floatval = atof(yytext); \
     return token; \
 }while(0)
 TreeNode *newToken(int token) {
@@ -30,32 +33,33 @@ floatNormal {digit}+\.{digit}+
 floatSci (({digit}*\.?{digit}+)|({digit}+\.))[eE][+-]?{digit}+
 float {floatNormal}|{floatSci}
 %%
->|<|>=|<=|==|!= { printf("RELOP\n"); handle(RELOP); }
-; { printf("SEMI\n"); handle(SEMI); }
-, { printf("COMMA\n"); handle(COMMA); }
-= { printf("ASSIGNOP\n"); handle(ASSIGNOP); }
-"+" { printf("PLUS\n"); handle(PLUS); }
-- { printf("MINUS\n"); handle(MINUS); }
-"*" { printf("MUL\n"); handle(STAR); }
-"/" { printf("DIV\n"); handle(DIV); }
-"&&" { printf("AND\n"); handle(AND); }
-"||" { printf("OR\n"); handle(OR); }
-"." { printf("DOT\n"); handle(DOT); }
-"!" { printf("NOT\n"); handle(NOT); }
-int|float {printf("TYPE\n"); handle(TYPE); }
-"(" { printf("LP\n"); handle(LP); }
-")" { printf("RP\n"); handle(RP); }
-"[" { printf("LB\n"); handle(LB); }
-"]" { printf("RB\n"); handle(RB); }
-"{" { printf("LC\n"); handle(LC); }
-"}" { printf("RC\n"); handle(RC); }
-struct { printf("STRUCT\n"); handle(STRUCT); }
-return { printf("RETURN\n"); handle(RETURN); }
-if { printf("IF\n"); handle(IF); }
-else { printf("ELSE\n"); handle(ELSE); }
-while { printf("WHILE\n"); handle(WHILE); }
-{num} { printf("Integer value: %d\n", atoi(yytext)); handle(INT); }
-{id} { printf("Id name: %s\n", yytext); handle(ID); }
+>|<|>=|<=|==|!= { handle(RELOP); }
+; { handle(SEMI); }
+, { handle(COMMA); }
+= { handle(ASSIGNOP); }
+"+" { handle(PLUS); }
+- { handle(MINUS); }
+"*" { handle(STAR); }
+"/" { handle(DIV); }
+"&&" { handle(AND); }
+"||" { handle(OR); }
+"." { handle(DOT); }
+"!" { handle(NOT); }
+int|float { handle(TYPE); }
+"(" { handle(LP); }
+")" { handle(RP); }
+"[" { handle(LB); }
+"]" { handle(RB); }
+"{" { handle(LC); }
+"}" { handle(RC); }
+struct { handle(STRUCT); }
+return { handle(RETURN); }
+if { handle(IF); }
+else { handle(ELSE); }
+while { handle(WHILE); }
+{num} { /*printf("Integer value: %d\n", atoi(yytext));*/ handle(INT); }
+{float} { /*printf("Float value: %f\n", atof(yytext));*/ handle(FLOAT); }
+{id} { /*printf("Id name: %s\n", yytext);*/ handle(ID); }
 {space} {}
 "//" { while (1) { char c = input(); if(c == '\n')break; } }
 "/*" {

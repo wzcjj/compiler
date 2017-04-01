@@ -15,5 +15,6 @@ extern TreeNode *root;
 
 TreeNode *newNode();
 void treeAddChild(TreeNode*, TreeNode*);
+void print(TreeNode*, int);
 
 #endif

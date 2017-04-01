@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "syntax_tree.h"
 extern FILE* yyin;
 void yyrestart(FILE*);
 void yyparse();
@@ -12,5 +13,6 @@ int main(int argc, char** argv) {
     }
     yyrestart(fin);
     yyparse();
+    print(root, 0);
     return 0;
 }
