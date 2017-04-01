@@ -42,7 +42,7 @@ $(YFC): $(YFILE)
 
 -include $(DFILES)
 
-.PHONY: run clean
+.PHONY: run clean submit
 
 run: $(TARGET)
 	$(TARGET) $(INPUT) $(OUTPUT)
@@ -50,4 +50,5 @@ run: $(TARGET)
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR)
 
-
+submit: clean
+	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011.tar.bz2

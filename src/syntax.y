@@ -1,9 +1,12 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#define handle1(token) \
+#include "syntax_tree.h"
+#define YYTOKEN_TABLE 1
+#define YYSTYPE TreeNode*
+#define handle1() \
 do {\
-    printf("%s ()\n", #token);\
+    printf("%s ()\n", yytname[30 + yyn]);\
 } while (0)
 void yyerror(char*);
 %}
@@ -21,7 +24,7 @@ void yyerror(char*);
 %token COMMA SEMI
 %%
 /* High-level Definitions */
-Program : ExtDefList { handle1(Program); }
+Program : ExtDefList { handle1(); }
         ;
 ExtDefList : {}
            | ExtDef ExtDefList {}
