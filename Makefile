@@ -26,8 +26,6 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
--include $(DFILES)
-
 $(LFO): $(LFC)
 	$(CC) -c $(LFC) -o $(LFO) $(CFLAGS)
 
@@ -41,6 +39,8 @@ $(LFC): $(LFILE) $(YFC)
 $(YFC): $(YFILE)
 	@mkdir -p $(GEN_DIR)
 	bison -o $(YFC) -d -v $(YFILE)
+
+-include $(DFILES)
 
 .PHONY: run clean
 

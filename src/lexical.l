@@ -1,10 +1,12 @@
 %{
 #include "common.h"
 #include <stdio.h>
-#include "syntax.tab.h"
 #include "syntax_tree.h"
+#define YYSTYPE TreeNode*
+#include "syntax.tab.h"
 #define handle(token) do { \
-    TreeNode *p = newToken(token); \
+    yylval = newToken(token); \
+    (*yylval).name = toArray(#token); \
     return token; \
 }while(0)
 TreeNode *newToken(int token) {
