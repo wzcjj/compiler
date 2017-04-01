@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -I $(LIB_DIR)
+CFLAGS = -I $(LIB_DIR)
 SRC_DIR = src
 GEN_DIR = generate
 BIN_DIR = bin
@@ -24,7 +24,7 @@ $(TARGET): $(OBJS) $(LFO) $(YFO)
 
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(CFLAGS)
 
 -include $(DFILES)
 

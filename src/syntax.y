@@ -83,7 +83,7 @@ Dec : VarDec {}
     | VarDec ASSIGNOP Exp {}
     ;
 /* Expressions */
-Exp : Exp ASSIGNOP Exp {}
+Exp : Exp ASSIGNOP Exp { $$ = $1; }
     | Exp AND Exp {}
     | Exp OR Exp {}
     | Exp RELOP Exp {}

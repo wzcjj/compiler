@@ -8,8 +8,10 @@ typedef struct TreeNode {
         float floatval;
     };
     char *text;
-};
+}TreeNode;
 
 extern TreeNode *root;
+
+TreeNode *newNode();
 
 #endif
