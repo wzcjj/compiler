@@ -12,7 +12,7 @@ do {\
     for (i = 1; i <= tokennum; i++) { \
         TreeNode *p = yyvsp[i - tokennum]; \
         if (i == 1) (*yyval).lineno = (*p).lineno; \
-        treeAddChild(yyval, p); \
+        if (p != NULL) treeAddChild(yyval, p); \
     } \
     printf("%s (%d)\n", yytname[YYNTOKENS + type], (*yyval).lineno); \
 } while (0)
@@ -34,8 +34,8 @@ void yyerror(char*);
 /* High-level Definitions */
 Program : ExtDefList { handle1(1); }
         ;
-ExtDefList : { handle1(2); }
-           | ExtDef ExtDefList { handle1(2); }
+ExtDefList : ExtDef ExtDefList { handle1(2); }
+           | { $$ = NULL; }
            ;
 ExtDef : Specifier ExtDecList SEMI { handle1(3); }
        | Specifier SEMI { handle1(3); }
@@ -51,8 +51,8 @@ Specifier : TYPE { handle1(5); }
 StructSpecifier : STRUCT OptTag LC DefList RC { handle1(6); }
                 | STRUCT Tag { handle1(6); }
                 ;
-OptTag : { handle1(7); }
-       | ID { handle1(7); }
+OptTag : ID { handle1(7); }
+       | { handle1(7); }
        ;
 Tag : ID { handle1(8); }
     ;
@@ -71,8 +71,8 @@ ParamDec : Specifier VarDec { handle1(12); }
 /* Statements */
 CompSt : LC DefList StmtList RC { handle1(13); }
        ;
-StmtList : { handle1(14); }
-         | Stmt StmtList { handle1(14); }
+StmtList : Stmt StmtList { handle1(14); }
+         | { $$ = NULL; }
          ;
 Stmt : Exp SEMI { handle1(15); }
      | CompSt { handle1(15); }
@@ -82,8 +82,8 @@ Stmt : Exp SEMI { handle1(15); }
      | WHILE LP Exp RP Stmt { handle1(15); }
      ;
 /* Local Definitions */
-DefList : { handle1(16); }
-        | Def DefList { handle1(16); }
+DefList : Def DefList { handle1(16); }
+        | { $$ = NULL; }
         ;
 Def : Specifier DecList SEMI { handle1(17); }
     ;
