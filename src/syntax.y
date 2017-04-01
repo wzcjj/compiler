@@ -4,9 +4,17 @@
 #include "syntax_tree.h"
 #define YYTOKEN_TABLE 1
 #define YYSTYPE TreeNode*
-#define handle1() \
+#define handle1(type) \
 do {\
-    printf("%s ()\n", yytname[30 + yyn]);\
+    int tokennum = yyr2[yyn]; \
+    printf("%s ()\n", yytname[YYNTOKENS + type]); \
+    yyval = newNode(); \
+    int i; \
+    for (i = 1; i <= tokennum; i++) { \
+        TreeNode *p = yyvsp[i - tokennum]; \
+        if (i == 1) (*yyval).lineno = (*p).lineno; \
+        treeAddChild(yyval, p); \
+    } \
 } while (0)
 void yyerror(char*);
 %}
@@ -24,10 +32,10 @@ void yyerror(char*);
 %token COMMA SEMI
 %%
 /* High-level Definitions */
-Program : ExtDefList { handle1(); }
+Program : ExtDefList { handle1(1); }
         ;
-ExtDefList : {}
-           | ExtDef ExtDefList {}
+ExtDefList : { handle1(2); }
+           | ExtDef ExtDefList { handle1(2); }
            ;
 ExtDef : Specifier ExtDecList SEMI {}
        | Specifier SEMI {}
