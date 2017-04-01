@@ -17,6 +17,7 @@ TreeNode *newToken(int token) {
     return p;
 }
 %}
+%option yylineno
 digit [0-9]
 letter [a-zA-Z_]
 space [ \t\n]
