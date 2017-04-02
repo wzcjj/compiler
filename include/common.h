@@ -1,6 +1,7 @@
 #ifndef COMPILER_COMMON_H
 #define COMPILER_COMMON_H
 
+//Copyright © 2017 wzcjj, Nanjing university
 char *toArray(char *);
 
 extern int errorstatus;

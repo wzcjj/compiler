@@ -1,3 +1,4 @@
+#Copyright © 2017 wzcjj, Nanjing university
 CC = gcc
 CFLAGS = -I $(LIB_DIR)
 SRC_DIR = src
@@ -15,9 +16,10 @@ YFC = $(GEN_DIR)/syntax.tab.c
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
-INPUT = testcase/1.10.c
+TESTFILE = 1.10
+INPUT = testcase/$(TESTFILE).c
 OUTPUT = output.txt
-#OUTPUT = testout/1.10.txt
+#OUTPUT = testout/$(TESTFILE).txt
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
 	@mkdir -p $(BIN_DIR)

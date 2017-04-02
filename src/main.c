@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "common.h"
 #include "syntax_tree.h"
+//Copyright © 2017 wzcjj, Nanjing university
 extern FILE* yyin;
 void yyrestart(FILE*);
 void yyparse();

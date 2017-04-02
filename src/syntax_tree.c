@@ -3,6 +3,7 @@
 #include <string.h>
 #include "syntax_tree.h"
 
+//Copyright © 2017 wzcjj, Nanjing university
 TreeNode *root = NULL;
 
 TreeNode *newNode() {

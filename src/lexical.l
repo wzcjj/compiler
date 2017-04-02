@@ -5,6 +5,7 @@
 #include "syntax_tree.h"
 #define YYSTYPE TreeNode*
 #include "syntax.tab.h"
+//Copyright © 2017 wzcjj, Nanjing university
 #define handle(token) do { \
     yylval = newToken(token); \
     (*yylval).name = toArray(#token); \

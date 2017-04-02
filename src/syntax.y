@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "syntax_tree.h"
+//Copyright © 2017 wzcjj, Nanjing university
 #define YYTOKEN_TABLE 1
 #define YYSTYPE TreeNode*
 #define handle1(type) \

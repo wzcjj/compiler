@@ -1,6 +1,7 @@
 #ifndef COMPILER_SYNTAX_TREE_H
 #define COMPILER_SYNTAX_TREE_H
 
+//Copyright © 2017 wzcjj, Nanjing university
 typedef struct TreeNode {
     int lineno, token;
     union {
