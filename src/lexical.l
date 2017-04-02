@@ -8,8 +8,7 @@
 #define handle(token) do { \
     yylval = newToken(token); \
     (*yylval).name = toArray(#token); \
-    if (token == INT) (*yylval).intval = atoi(yytext); \
-    else if (token == FLOAT) (*yylval).floatval = atof(yytext); \
+    if (token == FLOAT) (*yylval).floatval = atof(yytext); \
     return token; \
 }while(0)
 TreeNode *newToken(int token) {
@@ -57,7 +56,12 @@ return { handle(RETURN); }
 if { handle(IF); }
 else { handle(ELSE); }
 while { handle(WHILE); }
-{num} { /*printf("Integer value: %d\n", atoi(yytext));*/ handle(INT); }
+{numHex} { yylval = newToken(INT); (*yylval).name = "INT";
+    (*yylval).intval = strtol(yytext, NULL, 16); return INT; }
+{numOct} { yylval = newToken(INT); (*yylval).name = "INT";
+    (*yylval).intval = strtol(yytext, NULL, 8); return INT; }
+{numDec} { yylval = newToken(INT); (*yylval).name = "INT";
+    (*yylval).intval = strtol(yytext, NULL, 10); return INT; }
 {float} { /*printf("Float value: %f\n", atof(yytext));*/ handle(FLOAT); }
 {id} { /*printf("Id name: %s\n", yytext);*/ handle(ID); }
 {space} {}
