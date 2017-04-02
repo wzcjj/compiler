@@ -15,8 +15,9 @@ YFC = $(GEN_DIR)/syntax.tab.c
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
-INPUT = testcase/1.3.c
-OUTPUT = output.txt
+INPUT = testcase/1.2.c
+#OUTPUT = output.txt
+OUTPUT = testcase/1.2.txt
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
 	@mkdir -p $(BIN_DIR)

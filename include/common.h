@@ -3,6 +3,8 @@
 
 char *toArray(char *);
 
+extern int errorstatus;
+
 /*enum {
     INT, ID, SEMI, COMMA, ASSIGNOP,
     RELOP, PLUS, MINUS, STAR, DIV,

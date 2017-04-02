@@ -122,4 +122,5 @@ Args : Exp COMMA Args { handle1(21); }
 #include "lex.yy.c"
 void yyerror(char* msg) {
     printf("Error type B at Line %d: %s.\n", yylineno, msg);
+    errorstatus = 2;
 }

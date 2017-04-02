@@ -71,5 +71,5 @@ while { handle(WHILE); }
     }
 }
 . { printf("Error type A at line %d: Mysterious character \"%s\".\n", 
-           yylineno, yytext); }
+           yylineno, yytext); errorstatus = 1; }
 %%
