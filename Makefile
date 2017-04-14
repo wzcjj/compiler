@@ -56,7 +56,7 @@ $(YFC): $(YFILE)
 
 -include $(DFILES)
 
-.PHONY: run clean submit
+.PHONY: run clean submit push commit
 
 run: $(TARGET)
 	$(call git_commit, "run")
@@ -70,4 +70,8 @@ submit: clean
 
 push:
 	$(call git_commit, "push")
-	git push 
+	@git push
+
+commit:
+	@git add .
+	@git commit --allow-empty
