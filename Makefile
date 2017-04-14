@@ -67,3 +67,7 @@ clean:
 
 submit: clean
 	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011_lab2.tar.gz
+
+push:
+	$(call git_commit, "push")
+	git push 
