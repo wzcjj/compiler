@@ -21,6 +21,17 @@ INPUT = testcase/$(TESTFILE).c
 OUTPUT = output.txt
 #OUTPUT = testout/$(TESTFILE).txt
 
+# git config
+
+GITFLAGS = -q --author='wzcjj <438459483@qq.com>' --no-verify --allow-empty
+
+# prototype: git_commit(msg)
+define git_commit
+ 	-@git add . -A --ignore-errors
+	-@while (test -e .git/index.lock); do sleep 0.1; done
+	-@(echo "> $(1)" && echo 141250011 && id -un && uname -a && uptime && (head -c 20 /dev/urandom | hexdump -v -e '"%02x"') && echo) | git commit -F - $(GITFLAGS)
+endef
+
 $(TARGET): $(OBJS) $(LFO) $(YFO)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(OBJS) $(YFO) $(CFLAGS) -ll -ly -o $(TARGET)
@@ -48,10 +59,11 @@ $(YFC): $(YFILE)
 .PHONY: run clean submit
 
 run: $(TARGET)
+	$(call git_commit, "run")
 	$(TARGET) $(INPUT) $(OUTPUT)
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR)
 
 submit: clean
-	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011.tar.bz2
+	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011_lab2.tar.gz
