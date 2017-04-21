@@ -57,12 +57,12 @@ return { handle(RETURN); }
 if { handle(IF); }
 else { handle(ELSE); }
 while { handle(WHILE); }
+{numDec} { yylval = newToken(INT); (*yylval).name = "INT";
+    (*yylval).intval = strtol(yytext, NULL, 10); return INT; }
 {numHex} { yylval = newToken(INT); (*yylval).name = "INT";
     (*yylval).intval = strtol(yytext, NULL, 16); return INT; }
 {numOct} { yylval = newToken(INT); (*yylval).name = "INT";
     (*yylval).intval = strtol(yytext, NULL, 8); return INT; }
-{numDec} { yylval = newToken(INT); (*yylval).name = "INT";
-    (*yylval).intval = strtol(yytext, NULL, 10); return INT; }
 {float} { /*printf("Float value: %f\n", atof(yytext));*/ handle(FLOAT); }
 {id} { /*printf("Id name: %s\n", yytext);*/ handle(ID); }
 {space} {}
