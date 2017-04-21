@@ -9,7 +9,8 @@ int errorstatus = 0;
 int main(int argc, char** argv) {
     if (argc <= 2) return 1;
     FILE *fin = fopen(argv[1], "r");
-    FILE *fout = freopen(argv[2], "w", stdout);
+    //FILE *fout = 
+    freopen(argv[2], "w", stdout);
     if (!fin) {
         perror(argv[1]);
         return 1;

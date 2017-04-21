@@ -4,6 +4,7 @@
 #include <string.h>
 #include "syntax_tree.h"
 //Copyright © 2017 wzcjj, Nanjing university
+int yylex();
 #define YYTOKEN_TABLE 1
 #define YYSTYPE TreeNode*
 #define handle1(type) \
@@ -13,11 +14,10 @@ do {\
     int i; \
     for (i = 1; i <= tokennum; i++) { \
         TreeNode *p = yyvsp[i - tokennum]; \
-        if (i == 1) (*yyval).lineno = (*p).lineno; \
+        if (i == 1) yyval->lineno = p->lineno; \
         if (p != NULL) treeAddChild(yyval, p); \
     } \
-    (*yyval).name = yytname[YYNTOKENS + type]; \
-    /*printf("%s (%d)\n", yytname[YYNTOKENS + type], (*yyval).lineno);*/ \
+    yyval->name = (char*)(yytname[YYNTOKENS + type]); \
 } while (0)
 void yyerror(char*);
 %}

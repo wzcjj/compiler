@@ -1,6 +1,6 @@
 #Copyright © 2017 wzcjj, Nanjing university
 CC = gcc
-CFLAGS = -I $(LIB_DIR)
+CFLAGS = -Wall -Werror -I $(LIB_DIR)
 SRC_DIR = src
 GEN_DIR = generate
 BIN_DIR = bin
@@ -40,10 +40,10 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 $(LFO): $(LFC)
-	$(CC) -c $(LFC) -o $(LFO) $(CFLAGS)
+	$(CC) -c $(LFC) -o $(LFO) -I $(LIB_DIR)
 
 $(YFO): $(YFC)
-	$(CC) -c $(YFC) -o $(YFO) $(CFLAGS)
+	$(CC) -c $(YFC) -o $(YFO) -I $(LIB_DIR)
 
 $(LFC): $(LFILE) $(YFC)
 	@mkdir -p $(@D)
