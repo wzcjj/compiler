@@ -9,14 +9,14 @@
 #define handle(token) do { \
     yylval = newToken(token); \
     yylval->name = toArray(#token); \
-    if (token == FLOAT) (*yylval).floatval = atof(yytext); \
+    if (token == FLOAT) yylval->floatval = atof(yytext); \
     return token; \
 }while(0)
 TreeNode *newToken(int token) {
     TreeNode *p = newNode(token);
-    (*p).lineno = yylineno;
-    (*p).token = token;
-    (*p).text = toArray(yytext);
+    p->lineno = yylineno;
+    p->token = token;
+    p->text = toArray(yytext);
     return p;
 }
 %}
@@ -57,14 +57,14 @@ return { handle(RETURN); }
 if { handle(IF); }
 else { handle(ELSE); }
 while { handle(WHILE); }
-{numDec} { yylval = newToken(INT); (*yylval).name = "INT";
-    (*yylval).intval = strtol(yytext, NULL, 10); return INT; }
-{numHex} { yylval = newToken(INT); (*yylval).name = "INT";
-    (*yylval).intval = strtol(yytext, NULL, 16); return INT; }
-{numOct} { yylval = newToken(INT); (*yylval).name = "INT";
-    (*yylval).intval = strtol(yytext, NULL, 8); return INT; }
-{float} { /*printf("Float value: %f\n", atof(yytext));*/ handle(FLOAT); }
-{id} { /*printf("Id name: %s\n", yytext);*/ handle(ID); }
+{numDec} { yylval = newToken(INT); yylval->name = "INT";
+    yylval->intval = strtol(yytext, NULL, 10); return INT; }
+{numHex} { yylval = newToken(INT); yylval->name = "INT";
+    yylval->intval = strtol(yytext, NULL, 16); return INT; }
+{numOct} { yylval = newToken(INT); yylval->name = "INT";
+    yylval->intval = strtol(yytext, NULL, 8); return INT; }
+{float} { handle(FLOAT); }
+{id} { handle(ID); }
 {space} {}
 "//" { while (1) { char c = input(); if(c == '\n')break; } }
 "/*" {
