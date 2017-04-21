@@ -22,7 +22,6 @@ OUTPUT = output.txt
 #OUTPUT = testout/$(TESTFILE).txt
 
 # git config
-
 GITFLAGS = -q --author='wzcjj <438459483@qq.com>' --no-verify --allow-empty
 
 # prototype: git_commit(msg)
@@ -33,11 +32,11 @@ define git_commit
 endef
 
 $(TARGET): $(OBJS) $(LFO) $(YFO)
-	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(@D)
 	$(CC) $(OBJS) $(YFO) $(CFLAGS) -ll -ly -o $(TARGET)
 
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(@D)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 $(LFO): $(LFC)
@@ -47,11 +46,11 @@ $(YFO): $(YFC)
 	$(CC) -c $(YFC) -o $(YFO) $(CFLAGS)
 
 $(LFC): $(LFILE) $(YFC)
-	@mkdir -p $(GEN_DIR)
+	@mkdir -p $(@D)
 	flex -o $(LFC) $(LFILE)
 
 $(YFC): $(YFILE)
-	@mkdir -p $(GEN_DIR)
+	@mkdir -p $(@D)
 	bison -o $(YFC) -d -v $(YFILE)
 
 -include $(DFILES)
