@@ -8,7 +8,7 @@
 //Copyright © 2017 wzcjj, Nanjing university
 #define handle(token) do { \
     yylval = newToken(token); \
-    (*yylval).name = toArray(#token); \
+    yylval->name = toArray(#token); \
     if (token == FLOAT) (*yylval).floatval = atof(yytext); \
     return token; \
 }while(0)
