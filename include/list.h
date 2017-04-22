@@ -1,6 +1,7 @@
 #ifndef COMPILER_LIST_H
 #define COMPILER_LIST_H
 
+//Copyright © 2017 wzcjj, Nanjing university
 typedef struct List {
     struct List *prev, *next;
 } List;

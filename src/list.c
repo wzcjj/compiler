@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "list.h"
 
+//Copyright © 2017 wzcjj, Nanjing university
 void listAdd(List *prev, List *next, List *node) {
     node->prev = prev;
     node->next = next;
