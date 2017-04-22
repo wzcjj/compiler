@@ -8,22 +8,13 @@ TreeNode *root = NULL;
 
 TreeNode *newNode() {
     TreeNode *p = (TreeNode*) malloc(sizeof(TreeNode));
-    p->child = NULL;
-    p->broprev = p->bronext = p;
+    listInit(&p->child);
+    listInit(&p->list);
     return p;
 }
 
-void treeAddChild(TreeNode *root, TreeNode *p) {
-    if (root->child == NULL) {
-        root->child = p;
-    }
-    else {
-        TreeNode *child = root->child;
-        p->bronext = child->bronext;
-        child->bronext = p;
-        p->bronext->broprev = p;
-        p->broprev = child;
-    }
+void treeAddChild(TreeNode *now, TreeNode *p) {
+    listAddBefore(&now->child, &p->list);
 }
 
 void print(TreeNode *now, int deep) {
@@ -43,17 +34,13 @@ void print(TreeNode *now, int deep) {
         else if (strcmp(now->name, "FLOAT") == 0) {
             printf(": %f", now->floatval);
         }
-        //else printf("????");
     }
     else {
         printf(" (%d)", now->lineno);
     }
     printf("\n");
-    TreeNode *child = now->child, *p;
-    if (child != NULL) {
-        print(child, deep + 1);
-        for (p = child->broprev; p != child; p = p->broprev) {
-            print(p, deep + 1);
-        }
+    List *p;
+    listForeach(p, &now->child) {
+        print(listEntry(p, TreeNode), deep + 1);
     }
 }

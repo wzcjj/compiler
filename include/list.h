@@ -6,7 +6,10 @@ typedef struct List {
 } List;
 
 #define listEntry(ptr, type) \
-    ((type*)((char*)(ptr) - (int)(&((typr*)0)->list)))
+    ((type*)((char*)(ptr) - (int)(&((type*)0)->list)))
+
+#define listForeach(p, head) \
+    for ((p) = (head)->next; (p) != (head); (p) = (p)->next)
 
 void listAdd(List*, List*, List*);
 

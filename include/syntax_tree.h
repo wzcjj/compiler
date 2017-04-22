@@ -2,6 +2,9 @@
 #define COMPILER_SYNTAX_TREE_H
 
 //Copyright © 2017 wzcjj, Nanjing university
+
+#include "list.h"
+
 typedef struct TreeNode {
     int lineno, token;
     union {
@@ -9,7 +12,7 @@ typedef struct TreeNode {
         float floatval;
     };
     char *text, *name;
-    struct TreeNode *child, *broprev, *bronext;
+    List *child, *list;
 }TreeNode;
 
 extern TreeNode *root;
