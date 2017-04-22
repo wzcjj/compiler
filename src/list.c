@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "list.h"
 
 void listAdd(List *prev, List *next, List *node) {
@@ -18,7 +19,7 @@ void listAddAfter(List *list, List *node) {
 void listDelete(List *node) {
     List *prev = node->prev, *next = node->next;
     if (prev != NULL) prev->next = next;
-    if (next != NULL) next->prve = prev;
+    if (next != NULL) next->prev = prev;
 }
 
 void listInit(List *list) {

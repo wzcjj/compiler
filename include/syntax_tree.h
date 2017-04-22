@@ -12,7 +12,7 @@ typedef struct TreeNode {
         float floatval;
     };
     char *text, *name;
-    List *child, *list;
+    List child, list;
 }TreeNode;
 
 extern TreeNode *root;
