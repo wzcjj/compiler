@@ -9,10 +9,11 @@ typedef struct List {
 #define listEntry(ptr, type) \
     ((type*)((char*)(ptr) - (int)(&((type*)0)->list)))
 
+#define listEntry(ptr, type, list) \
+    ((type*)((char*)(ptr) - (int)(&((type*)0)->list)))
+
 #define listForeach(p, head) \
     for ((p) = (head)->next; (p) != (head); (p) = (p)->next)
-
-void listAdd(List*, List*, List*);
 
 void listAddBefore(List*, List*);
 
@@ -21,5 +22,7 @@ void listAddAfter(List*, List*);
 void listDelete(List*);
 
 void listInit(List*);
+
+bool listIsEmpty(List*);
 
 #endif

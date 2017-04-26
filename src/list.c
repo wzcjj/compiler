@@ -2,7 +2,7 @@
 #include "list.h"
 
 //Copyright © 2017 wzcjj, Nanjing university
-void listAdd(List *prev, List *next, List *node) {
+static void listAdd(List *prev, List *next, List *node) {
     node->prev = prev;
     node->next = next;
     if (prev != NULL) prev->next = node;
@@ -27,3 +27,6 @@ void listInit(List *list) {
     list->prev = list->next = list;
 }
 
+bool listIsEmpty(List *list) {
+    return list == list->next;
+}
