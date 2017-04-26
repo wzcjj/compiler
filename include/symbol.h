@@ -27,7 +27,7 @@ typedef struct Field {
 typedef Fields Args;
 typedef Field Arg;
 typedef struct Func {
-    Type *retType;
+    Type *rettype;
     Args args;
     bool defined;
 } Func;
