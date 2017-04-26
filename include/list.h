@@ -2,6 +2,7 @@
 #define COMPILER_LIST_H
 
 //Copyright © 2017 wzcjj, Nanjing university
+#include <stdbool.h>
 typedef struct List {
     struct List *prev, *next;
 } List;
@@ -9,7 +10,7 @@ typedef struct List {
 #define listEntry(ptr, type) \
     ((type*)((char*)(ptr) - (int)(&((type*)0)->list)))
 
-#define listEntry(ptr, type, list) \
+#define listEntry3(ptr, type, list) \
     ((type*)((char*)(ptr) - (int)(&((type*)0)->list)))
 
 #define listForeach(p, head) \
