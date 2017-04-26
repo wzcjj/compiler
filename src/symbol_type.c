@@ -69,3 +69,18 @@ void typeRelease(Type *type) {
         free(type);
     }
 }
+
+void argsRelease(Args *args) {
+    while (!listIsEmpty(args)) {
+        Arg *arg = listEntry(args->next, Arg);
+        listDelete(&arg->list);
+        free(arg->name);
+        free(arg);
+    }
+}
+
+void funcRelease(Func *func) {
+    argsRelease(&func->args);
+    free(func);
+}
+

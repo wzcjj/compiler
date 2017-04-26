@@ -67,7 +67,7 @@ Symbol *symbolFind(const char *name) {
     return NULL;
 }
 
-bool symbolAtStackTop(const char *name) {
+static bool symbolAtStackTop(const char *name) {
     Symbol *symbol = symbolFind(name);
     return (symbol != NULL) && (symbol->depth == stacktop);
 }

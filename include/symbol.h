@@ -3,6 +3,7 @@
 //Copyright © 2017 wzcjj, Nanjing university
 #include "list.h"
 
+//symbol_type
 typedef enum {
     BASIC, ARRAY, STRUCTURE
 } TypeKind;
@@ -55,9 +56,15 @@ typedef struct Symbol {
         Type *type;
         Func *func;
     };
-    int id;
-    bool isRef;
     int depth;
 } Symbol;
+
+// symbol_table
+void symbolTableInit();
+void symbolRelease(Symbol*);
+void symbolStackPush();
+void symbolStackPop();
+Symbol *symbolFind(const char*);
+bool symbolInsert(Symbol*);
 
 #endif
