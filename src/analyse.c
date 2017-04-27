@@ -8,6 +8,7 @@
 #define isSyntax(p, token) \
     ((p) != NULL && strcmp((p)->name, #token) == 0)
 #define getChilds(node) \
+TreeNode *childs[10]; \
     do { \
         List *pointer; \
         int childscnt = 0; \
@@ -16,33 +17,33 @@
         } \
     } while (0)
 
-TreeNode *childs[10];
 
+typedef Field Dec;
 static void analyseExtDefList(TreeNode*);
 static void analyseExtDef(TreeNode*);
-static void analyseExtDecList(TreeNode*);
-static void analyseSpecifier(TreeNode*);
-static void analyseStructSpecifier(TreeNode*);
-static void analyseOptTag(TreeNode*);
-static void analyseTag(TreeNode*);
-static void analyseVarDec(TreeNode*);
-static void analyseFunDec(TreeNode*);
+static void analyseExtDecList(TreeNode*, Type*);
+static Type *analyseSpecifier(TreeNode*);
+static Type *analyseStructSpecifier(TreeNode*);
+static Type *analyseOptTag(TreeNode*);
+static Type *analyseTag(TreeNode*);
+static Dec *analyseVarDec(TreeNode*, Type*);
+static Symbol analyseFunDec(TreeNode*, Type*);
 static void analyseVarList(TreeNode*);
-static void analyseParamDec(TreeNode*);
+static Arg analyseParamDec(TreeNode*);
 static void analyseCompSt(TreeNode*);
 static void analyseStmtList(TreeNode*);
 static void analyseStmt(TreeNode*);
 static void analyseDefList(TreeNode*);
 static void analyseDef(TreeNode*);
-static void analyseDecList(TreeNode*);
-static void analyseDec(TreeNode*);
+static void analyseDecList(TreeNode*, Type*);
+static void analyseDec(TreeNode*, Type*);
 static void analyseExp(TreeNode*);
 static void analyseArgs(TreeNode*);
 
 void analyseProgram(TreeNode* p) {
+    getChilds(p);
     symbolTableInit();
     typesInit();
-    getChilds(p);
     analyseExtDefList(childs[1]);
 }
 
