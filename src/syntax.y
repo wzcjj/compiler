@@ -43,6 +43,7 @@ ExtDefList : ExtDef ExtDefList { handle1(2); }
 ExtDef : Specifier ExtDecList SEMI { handle1(3); }
        | Specifier SEMI { handle1(3); }
        | Specifier FunDec CompSt { handle1(3); }
+       | Specifier FunDec SEMI { handle1(3); }
        ;
 ExtDecList : VarDec { handle1(4); }
            | VarDec COMMA ExtDecList { handle1(4); }
@@ -55,7 +56,7 @@ StructSpecifier : STRUCT OptTag LC DefList RC { handle1(6); }
                 | STRUCT Tag { handle1(6); }
                 ;
 OptTag : ID { handle1(7); }
-       | { handle1(7); }
+       | { $$ = NULL; }
        ;
 Tag : ID { handle1(8); }
     ;
