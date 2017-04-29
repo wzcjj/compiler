@@ -67,4 +67,10 @@ void symbolStackPop();
 Symbol *symbolFind(const char*);
 bool symbolInsert(Symbol*);
 
+// symbol
+Symbol *newVarSymbol(const char*, Type*);
+Symbol *newFuncSymbol(const char*, Func*);
+Symbol *newStructSymbol(const char*, Type*);
+Func *newFunc(Type*);
+
 #endif

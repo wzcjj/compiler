@@ -17,13 +17,43 @@
         } \
     } while (0)
 
+#define semanticError(errorno, lineno, ...) \
+    do { \
+        errorstatus = 2; \
+        printf("Error type %d at Line %d: ", (errorno), (lineno)); \
+        printf(SEMANTIC_ERROR[(errorno) - 1], __VA_ARGS__); \
+        printf(".\n"); \
+    } while (0)
+extern int errorstatus;
+const char *SEMANTIC_ERROR[] = {
+        "Undefined variable \"%s\"",
+        "Undefined function \"%s\"",
+        "Redefined variable \"%s\"",
+        "Redefined function \"%s\"",
+        "Type mismatched for assignment",
+        "The left-hand side of an assignment must be a variable",
+        "Type mismatched for operands",
+        "Type mismatched for return",
+        "Function \"%s(%s)\" is not applicable for arguments \"(%s)\"",
+        "\"%s\" is not an array",
+        "\"%s\" is not a function",
+        "\"%s\" is not an integer",
+        "Illegal use of \".\"",
+        "Non-existent field \"%s\"",
+        "Redefined or initialized field \"%s\"",
+        "Duplicated name \"%s\"",
+        "Undefined structure \"%s\"",
+        "Undefined function \"%s\"",
+        "Inconsistent declaration of function \"%s\"",
+};
+
 static void analyseExtDefList(TreeNode*);
 static void analyseExtDef(TreeNode*);
 static void analyseExtDecList(TreeNode*, Type*);
 static Type *analyseSpecifier(TreeNode*);
 static Type *analyseStructSpecifier(TreeNode*);
-static void *analyseOptTag(TreeNode*, Type*);
-static Symbol *analyseTag(TreeNode*);
+static void analyseOptTag(TreeNode*, Type*);
+static Type *analyseTag(TreeNode*);
 static void *analyseVarDec(TreeNode*, Type*);
 static Symbol *analyseFunDec(TreeNode*, Type*, bool);
 static void analyseVarList(TreeNode*);
@@ -89,7 +119,7 @@ static Type *analyseSpecifier(TreeNode *p) {
 static Type *analyseStructSpecifier(TreeNode *p) {
     getChilds(p);
     if (isSyntax(childs[2], Tag)) {
-        return analyseTag(childs[2])->type;
+        return analyseTag(childs[2]);
     }
     else {
         Type *type = (Type*) malloc(sizeof(Type));
@@ -98,4 +128,22 @@ static Type *analyseStructSpecifier(TreeNode *p) {
         analyseOptTag(childs[2], type);
         return type;
     }
+}
+
+static void analyseOptTag(TreeNode *p, Type *type) {
+    if (p == NULL) return;
+    getChilds(p);
+    Symbol *symbol = newStructSymbol(childs[1]->text, type);
+    if (!symbolInsert(symbol))
+        semanticError(16, childs[1]->lineno, childs[1]->text);
+}
+
+static Type *analyseTag(TreeNode *p) {
+    getChilds(p);
+    Symbol *symbol = symbolFind(childs[1]->text);
+    if (symbol == NULL || symbol->kind != STRUCT) {
+        semanticError(17, childs[1]->lineno, childs[1]->text);
+        return TYPE_INT;
+    }
+    return symbol->type;
 }
