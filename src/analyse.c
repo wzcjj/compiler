@@ -226,8 +226,8 @@ static void analyseCompSt(TreeNode *p, Func *func) {
                 semanticError(3, p->lineno, symbol->name);
         }
     }
-    analyseDefList(childs[2], NULL);
     return;
+    analyseDefList(childs[2], NULL);
     analyseStmtList(childs[3]);
     symbolStackPop();
 }
