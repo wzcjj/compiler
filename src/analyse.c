@@ -217,6 +217,7 @@ static Arg *analyseParamDec(TreeNode *p) {
 static void analyseCompSt(TreeNode *p, Func *func) {
     getChilds(p);
     symbolStackPush();
+    return;
     if (func != NULL) {
         List *q;
         listForeach(q, &func->args) {
@@ -226,7 +227,6 @@ static void analyseCompSt(TreeNode *p, Func *func) {
                 semanticError(3, p->lineno, symbol->name);
         }
     }
-    return;
     analyseDefList(childs[2], NULL);
     analyseStmtList(childs[3]);
     symbolStackPop();
