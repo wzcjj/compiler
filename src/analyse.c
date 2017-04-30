@@ -40,7 +40,7 @@ const char *SEMANTIC_ERROR[] = {
         "\"%s\" is not an integer",
         "Illegal use of \".\"",
         "Non-existent field \"%s\"",
-        "Redefined field \"%s\"",
+        "%s field \"%s\"",
         "Duplicated name \"%s\"",
         "Undefined structure \"%s\"",
         "Undefined function \"%s\"",
@@ -67,9 +67,9 @@ static void analyseCompSt(TreeNode*, Func*);
 static void analyseStmtList(TreeNode*);
 static void analyseStmt(TreeNode*);
 static void analyseDefList(TreeNode*, Fields*);
-static void analyseDef(TreeNode*);
-static void analyseDecList(TreeNode*, Type*);
-static void analyseDec(TreeNode*, Type*);
+static void analyseDef(TreeNode*, Fields*);
+static void analyseDecList(TreeNode*, Type*, Fields*);
+static void analyseDec(TreeNode*, Type*, Fields*);
 static Val analyseExp(TreeNode*);
 static void analyseArgs(TreeNode*);
 
@@ -247,11 +247,86 @@ static void analyseStmt(TreeNode *p) {
     }
     else if (isSyntax(childs[1], RETURN)) {
         Type *type = analyseExp(childs[2]).type;
-        if (typeEqual(type, rettype)) semanticError(8, p->lineno, "");
+        if (!typeEqual(type, rettype)) semanticError(8, p->lineno, "");
     }
     else {
         requireType(childs[3], TYPE_INT, 7);
         analyseStmt(childs[5]);
         if (childscnt == 7) analyseStmt(childs[7]);
     }
+}
+
+static void analyseDefList(TreeNode *p, Fields *list) {
+    if (p == NULL) return;
+    getChilds(p);
+    analyseDef(childs[1], list);
+    analyseDefList(childs[2], list);
+}
+
+static void analyseDef(TreeNode *p, Fields *list) {
+    getChilds(p);
+    Type *type = analyseSpecifier(childs[1]);
+    analyseDecList(childs[2], type, list);
+}
+
+static void analyseDecList(TreeNode *p, Type *type, Fields *list) {
+    getChilds(p);
+    analyseDec(childs[1], type, list);
+    if (childscnt == 3) analyseDecList(childs[3], type, list);
+}
+
+static void analyseDec(TreeNode *p, Type *type, Fields *list) {
+    getChilds(p);
+    Field *dec = analyseVarDec(childs[1], type);
+    if (list != NULL) {
+        if (fieldFind(list, dec->name) != NULL)
+            semanticError(15, p->lineno, "Redefined", dec->name);
+        else listAddBefore(list, &dec->list);
+        if (childscnt == 3)
+            semanticError(15, p->lineno, "Initialized", dec->name);
+    }
+    else {
+        Symbol *symbol = newVarSymbol(dec->name, dec->type);
+        if (!symbolInsert(symbol))
+            semanticError(3, p->lineno, symbol->name);
+        else if (childscnt == 3) {
+            Val val = analyseExp(childs[3]);
+            if (!typeEqual(val.type, symbol->type))
+                semanticError(5, childs[2]->lineno, "");
+        }
+        free(dec->name);
+        free(dec);
+    }
+}
+
+static Val makeVar(Type *type) {
+    Val val;
+    val.type = type;
+    val.isvar = true;
+    return val;
+}
+
+static Val makeVal(Type *type) {
+    Val val;
+    val.type = type;
+    val.isvar = false;
+    return val;
+}
+
+static Val requireBasic(TreeNode *p, int errorno) {
+    Val val = analyseExp(p);
+    if (val.type->kind != BASIC)
+        semanticError(errorno, p->lineno, p->text);
+    return val;
+}
+
+static Val requireType(TreeNode *p, Type *type, int errorno) {
+    Val val = analyseExp(p);
+    if (!typeEqual(val.type, type))
+        semanticError(errorno, p->lineno, p->text);
+    return val;
+}
+
+static Val analyseExp(TreeNode *p) {
+    return makeVal(TYPE_INT);
 }

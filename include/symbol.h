@@ -46,6 +46,8 @@ void argsRelease(Args*);
 void funcRelease(Func*);
 void typeRelease(Type*);
 
+Field *fieldFind(Fields *, const char *);
+
 typedef enum {
     VAR, STRUCT, FUNC
 } SymbolKind;

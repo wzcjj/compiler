@@ -84,3 +84,11 @@ void funcRelease(Func *func) {
     free(func);
 }
 
+Field *fieldFind(Fields *structure, const char *fieldname) {
+    List *p;
+    listForeach(p, structure) {
+        Field *field = listEntry(p, Field);
+        if (strcmp(field->name, fieldname) == 0) return field;
+    }
+    return NULL;
+}
