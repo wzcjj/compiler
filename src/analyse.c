@@ -83,12 +83,9 @@ void analyseProgram(TreeNode* p) {
 }
 
 static void analyseExtDefList(TreeNode *p) {
-    if (p == NULL) return;
     getChilds(p);
-    printf("%d",childscnt);
-    return;
     analyseExtDef(childs[1]);
-    analyseExtDefList(childs[2]);
+    if (childscnt == 2) analyseExtDefList(childs[2]);
 }
 
 static void analyseExtDef(TreeNode *p) {
@@ -133,14 +130,13 @@ static Type *analyseStructSpecifier(TreeNode *p) {
     else {
         Type *type = (Type*) malloc(sizeof(Type));
         type->kind = STRUCTURE;
-        analyseDefList(childs[4], &type->structure);
-        analyseOptTag(childs[2], type);
+        if (isSyntax(childs[childscnt - 1], DefList)) analyseDefList(childs[4], &type->structure);
+        if (isSyntax(childs[2], OptTag)) analyseOptTag(childs[2], type);
         return type;
     }
 }
 
 static void analyseOptTag(TreeNode *p, Type *type) {
-    if (p == NULL) return;
     getChilds(p);
     Symbol *symbol = newStructSymbol(childs[1]->text, type);
     if (!symbolInsert(symbol))
@@ -228,16 +224,15 @@ static void analyseCompSt(TreeNode *p, Func *func) {
                 semanticError(3, p->lineno, symbol->name);
         }
     }
-    analyseDefList(childs[2], NULL);
-    analyseStmtList(childs[3]);
+    if (isSyntax(childs[2], DefList)) analyseDefList(childs[2], NULL);
+    if (isSyntax(childs[childscnt - 1], StmtList)) analyseStmtList(childs[3]);
     symbolStackPop();
 }
 
 static void analyseStmtList(TreeNode *p) {
-    if (p == NULL) return;
     getChilds(p);
     analyseStmt(childs[1]);
-    analyseStmtList(childs[2]);
+    if (childscnt == 2) analyseStmtList(childs[2]);
 }
 
 static void analyseStmt(TreeNode *p) {
@@ -260,10 +255,9 @@ static void analyseStmt(TreeNode *p) {
 }
 
 static void analyseDefList(TreeNode *p, Fields *list) {
-    if (p == NULL) return;
     getChilds(p);
     analyseDef(childs[1], list);
-    analyseDefList(childs[2], list);
+    if (childscnt == 2) analyseDefList(childs[2], list);
 }
 
 static void analyseDef(TreeNode *p, Fields *list) {
