@@ -85,12 +85,12 @@ void analyseProgram(TreeNode* p) {
 static void analyseExtDefList(TreeNode *p) {
     if (p == NULL) return;
     getChilds(p);
+    return;
     analyseExtDef(childs[1]);
     analyseExtDefList(childs[2]);
 }
 
 static void analyseExtDef(TreeNode *p) {
-    return;
     getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
     if (isSyntax(childs[2], ExtDecList)) {
