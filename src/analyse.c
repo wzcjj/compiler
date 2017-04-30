@@ -76,10 +76,10 @@ static void analyseArgs(TreeNode*, Args*);
 static Val requireType(TreeNode*, Type*, int);
 
 void analyseProgram(TreeNode* p) {
+    fprintf(stdout, "asd\n");
     getChilds(p);
     symbolTableInit();
     typesInit();
-    fprintf(stdout, "asd\n");
     analyseExtDefList(childs[1]);
 }
 
