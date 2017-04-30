@@ -79,7 +79,6 @@ void analyseProgram(TreeNode* p) {
     getChilds(p);
     symbolTableInit();
     typesInit();
-    return;
     analyseExtDefList(childs[1]);
 }
 
@@ -87,6 +86,7 @@ static void analyseExtDefList(TreeNode *p) {
     if (p == NULL) return;
     getChilds(p);
     analyseExtDef(childs[1]);
+    return;
     analyseExtDefList(childs[2]);
 }
 
