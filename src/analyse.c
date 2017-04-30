@@ -186,14 +186,12 @@ static Symbol *analyseFunDec(TreeNode *p, Type *type, bool isdef) {
             symbol = newFuncSymbol(childs[1]->text, func);
             symbolInsert(symbol);
         }
+        if (funcEqual(symbol->func, func)) {
+            funcRelease(func);
+            return symbol;
+        }
         else {
-            if (funcEqual(symbol->func, func)) {
-                funcRelease(func);
-                return symbol;
-            }
-            else {
-                semanticError(19, p->lineno, symbol->name);
-            }
+            semanticError(19, p->lineno, symbol->name);
         }
     }
     funcRelease(func);
