@@ -85,6 +85,7 @@ void analyseProgram(TreeNode* p) {
 static void analyseExtDefList(TreeNode *p) {
     if (p == NULL) return;
     getChilds(p);
+    printf("%d",childscnt);
     return;
     analyseExtDef(childs[1]);
     analyseExtDefList(childs[2]);
