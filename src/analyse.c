@@ -90,8 +90,8 @@ static void analyseExtDefList(TreeNode *p) {
 }
 
 static void analyseExtDef(TreeNode *p) {
-    getChilds(p);
     return;
+    getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
     if (isSyntax(childs[2], ExtDecList)) {
         analyseExtDecList(childs[2], type);
