@@ -46,6 +46,7 @@ void argsRelease(Args*);
 void funcRelease(Func*);
 void typeRelease(Type*);
 
+void argsToStr(Args*, char*);
 Field *fieldFind(Fields *, const char *);
 
 typedef enum {

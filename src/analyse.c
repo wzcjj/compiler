@@ -71,7 +71,7 @@ static void analyseDef(TreeNode*, Fields*);
 static void analyseDecList(TreeNode*, Type*, Fields*);
 static void analyseDec(TreeNode*, Type*, Fields*);
 static Val analyseExp(TreeNode*);
-static void analyseArgs(TreeNode*);
+static void analyseArgs(TreeNode*, Args*);
 
 static Val requireType(TreeNode*, Type*, int);
 
@@ -328,5 +328,105 @@ static Val requireType(TreeNode *p, Type *type, int errorno) {
 }
 
 static Val analyseExp(TreeNode *p) {
+    getChilds(p);
+    if (isSyntax(childs[1], Exp)) {
+        if (isSyntax(childs[2], ASSIGNOP)) {
+            Val left = analyseExp(childs[1]);
+            if (!left.isvar)
+                semanticError(6,childs[1]->lineno, "");
+            else {
+                Val right = requireType(childs[3], left.type, 5);
+                return left;
+            }
+        }
+        else if (isSyntax(childs[2], AND) || isSyntax(childs[2], OR)) {
+            Val left = requireType(childs[1], TYPE_INT, 7);
+            Val right = requireType(childs[3], TYPE_INT, 7);
+            return makeVal(TYPE_INT);
+        }
+        else if (isSyntax(childs[2], RELOP) || isSyntax(childs[2], PLUS)
+                 || isSyntax(childs[2], MINUS) || isSyntax(childs[2], STAR)
+                 || isSyntax(childs[2], DIV)) {
+            Val left = requireBasic(childs[1], 7);
+            Val right = requireType(childs[3], left.type, 7);
+            return makeVal(left.type);
+        }
+        else if (isSyntax(childs[2], LB)) {
+            Val base = analyseExp(childs[1]);
+            Val index = requireType(childs[3], TYPE_INT, 12);
+            if (base.type->kind != ARRAY)
+                semanticError(10, childs[1]->lineno, childs[1]->text);
+            else {
+                base.type = base.type->array.elem;
+                return base;
+            }
+        }
+        else {
+            Val base = analyseExp(childs[1]);
+            char *fieldname = childs[3]->text;
+            if (base.type->kind != STRUCTURE)
+                semanticError(13, childs[2]->lineno, "");
+            else {
+                Field *field = fieldFind(&base.type->structure, fieldname);
+                if (field == NULL)
+                    semanticError(14, childs[3]->lineno, fieldname);
+                else {
+                    base.type = field->type;
+                    return base;
+                }
+            }
+        }
+    }
+    else if (isSyntax(childs[1], LP)) {
+        return analyseExp(childs[2]);
+    }
+    else if (isSyntax(childs[1], MINUS)) {
+        Val val = requireBasic(childs[2], 7);
+        return makeVal(val.type);
+    }
+    else if (isSyntax(childs[1], NOT)) {
+        Val val = requireType(childs[2], TYPE_INT, 7);
+        return makeVal(TYPE_INT);
+    }
+    else if (isSyntax(childs[1], INT)) return makeVal(TYPE_INT);
+    else if (isSyntax(childs[1], FLOAT)) return makeVal(TYPE_FLOAT);
+    else {
+        if (childscnt == 1) {
+            Symbol *symbol = symbolFind(childs[1]->text);
+            if (symbol == NULL)
+                semanticError(1, childs[1]->lineno, childs[1]->text);
+            else return makeVar(symbol->type);
+        }
+        else {
+            Symbol *symbol = symbolFind(childs[1]->text);
+            if (symbol == NULL)
+                semanticError(2, childs[1]->lineno, childs[1]->text);
+            else if (symbol->kind != FUNC)
+                semanticError(11, childs[1]->lineno, childs[1]->text);
+            else {
+                Args args;
+                listInit(&args);
+                if (childscnt == 4) analyseArgs(childs[3], &args);
+                if (!argsEqual(&args, &symbol->func->args)) {
+                    char funcstr[32], argsstr[32];
+                    argsToStr(&symbol->func->args, funcstr);
+                    argsToStr(&args, argsstr);
+                    semanticError(9, childs[1]->lineno, symbol->name,
+                                  funcstr, argsstr);
+                }
+                argsRelease(&args);
+                return makeVal(symbol->func->rettype);
+            }
+        }
+    }
     return makeVal(TYPE_INT);
+}
+
+static void analyseArgs(TreeNode *p, Args *args) {
+    getChilds(p);
+    Arg *arg = (Arg*) malloc(sizeof(Arg));
+    arg->type = analyseExp(childs[1]).type;
+    arg->name = NULL;
+    listAddBefore(args, &arg->list);
+    if (childscnt == 3) analyseArgs(childs[3], args);
 }

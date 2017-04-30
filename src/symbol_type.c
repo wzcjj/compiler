@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "symbol.h"
 
 static Type TYPE_INT_, TYPE_FLOAT_;
@@ -91,4 +92,42 @@ Field *fieldFind(Fields *structure, const char *fieldname) {
         if (strcmp(field->name, fieldname) == 0) return field;
     }
     return NULL;
+}
+
+static Type *baseType(Type *type) {
+    if (type->kind != ARRAY) return type;
+    else return baseType(type->array.elem);
+}
+
+static void typeArrayToStr(Type *type, char *s) {
+    if (type->kind == ARRAY) {
+        sprintf(s, "[%d]", type->array.size);
+        s += strlen(s);
+        typeArrayToStr(type->array.elem, s);
+    }
+}
+
+static void typeToStr(Type *type, char *s) {
+    if (typeEqual(type, TYPE_INT)) strcpy(s, "int");
+    else if (typeEqual(type, TYPE_FLOAT)) strcpy(s, "float");
+    else if (type->kind == STRUCTURE) strcpy(s, "struct");
+    else {
+        typeToStr(baseType(type), s);
+        s += strlen(s);
+        typeArrayToStr(type, s);
+    }
+}
+
+void argsToStr(Args *list, char *s) {
+    Args *p;
+    listForeach(p, list) {
+        Arg *arg = listEntry(p, Arg);
+        if (p != list->next) {
+            strcpy(s, ", ");
+            s += 2;
+        }
+        typeToStr(arg->type, s);
+        s += strlen(s);
+    }
+    *s = 0;
 }
