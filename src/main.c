@@ -18,7 +18,8 @@ int main(int argc, char** argv) {
     }
     yyrestart(fin);
     yyparse();
-    analyseProgram(root);
-    //if (!errorstatus) print(root, 0);
+    if (!errorstatus)
+        print(root, 0);
+        analyseProgram(root);
     return 0;
 }
