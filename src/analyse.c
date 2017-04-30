@@ -216,8 +216,8 @@ static Arg *analyseParamDec(TreeNode *p) {
 
 static void analyseCompSt(TreeNode *p, Func *func) {
     getChilds(p);
-    symbolStackPush();
     return;
+    symbolStackPush();
     if (func != NULL) {
         List *q;
         listForeach(q, &func->args) {
