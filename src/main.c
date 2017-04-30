@@ -20,6 +20,6 @@ int main(int argc, char** argv) {
     yyparse();
     if (!errorstatus)
         print(root, 0);
-        analyseProgram(root);
+        //analyseProgram(root);
     return 0;
 }
