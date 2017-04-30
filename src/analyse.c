@@ -98,7 +98,6 @@ static void analyseExtDef(TreeNode *p) {
     else if (isSyntax(childs[2], FunDec)) {
         bool isdef = isSyntax(childs[3], CompSt);
         Symbol *symbol = analyseFunDec(childs[2], type, isdef);
-    return;
         Func *func = symbol->func;
         if (isdef) {
             analyseCompSt(childs[3], func);
@@ -228,6 +227,7 @@ static void analyseCompSt(TreeNode *p, Func *func) {
         }
     }
     analyseDefList(childs[2], NULL);
+    return;
     analyseStmtList(childs[3]);
     symbolStackPop();
 }
