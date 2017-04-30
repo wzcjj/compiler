@@ -12,7 +12,7 @@
     int childscnt = 0; \
     do { \
         List *pointer; \
-        listForeach(pointer, &(node)->list) { \
+        listForeach(pointer, &(node)->child) { \
             childs[++childscnt] = listEntry(pointer, TreeNode); \
         } \
     } while (0)
