@@ -7,7 +7,7 @@ static Type TYPE_INT_, TYPE_FLOAT_;
 Type *const TYPE_INT = &TYPE_INT_;
 Type *const TYPE_FLOAT = &TYPE_FLOAT_;
 
-void typeInit() {
+void typesInit() {
     TYPE_INT_.kind = BASIC;
     TYPE_INT_.basic = 0;
     TYPE_FLOAT_.kind = BASIC;

@@ -335,25 +335,25 @@ static Val analyseExp(TreeNode *p) {
             if (!left.isvar)
                 semanticError(6,childs[1]->lineno, "");
             else {
-                Val right = requireType(childs[3], left.type, 5);
+                requireType(childs[3], left.type, 5);
                 return left;
             }
         }
         else if (isSyntax(childs[2], AND) || isSyntax(childs[2], OR)) {
-            Val left = requireType(childs[1], TYPE_INT, 7);
-            Val right = requireType(childs[3], TYPE_INT, 7);
+            requireType(childs[1], TYPE_INT, 7);
+            requireType(childs[3], TYPE_INT, 7);
             return makeVal(TYPE_INT);
         }
         else if (isSyntax(childs[2], RELOP) || isSyntax(childs[2], PLUS)
                  || isSyntax(childs[2], MINUS) || isSyntax(childs[2], STAR)
                  || isSyntax(childs[2], DIV)) {
             Val left = requireBasic(childs[1], 7);
-            Val right = requireType(childs[3], left.type, 7);
+            requireType(childs[3], left.type, 7);
             return makeVal(left.type);
         }
         else if (isSyntax(childs[2], LB)) {
             Val base = analyseExp(childs[1]);
-            Val index = requireType(childs[3], TYPE_INT, 12);
+            requireType(childs[3], TYPE_INT, 12);
             if (base.type->kind != ARRAY)
                 semanticError(10, childs[1]->lineno, childs[1]->text);
             else {
@@ -385,7 +385,7 @@ static Val analyseExp(TreeNode *p) {
         return makeVal(val.type);
     }
     else if (isSyntax(childs[1], NOT)) {
-        Val val = requireType(childs[2], TYPE_INT, 7);
+        requireType(childs[2], TYPE_INT, 7);
         return makeVal(TYPE_INT);
     }
     else if (isSyntax(childs[1], INT)) return makeVal(TYPE_INT);
