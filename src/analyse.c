@@ -79,6 +79,7 @@ void analyseProgram(TreeNode* p) {
     getChilds(p);
     symbolTableInit();
     typesInit();
+    fprintf(stdout, "asd\n");
     analyseExtDefList(childs[1]);
 }
 
