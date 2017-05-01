@@ -2,6 +2,13 @@
 #define COMPILER_COMMON_H
 
 //Copyright © 2017 wzcjj, Nanjing university
+#define ASSERT
+#ifdef ASSERT
+#include <assert.h>
+#define Assert assert
+#else
+#define Assert
+#endif
 char *toArray(const char *);
 
 extern int errorstatus;

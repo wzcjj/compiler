@@ -76,6 +76,7 @@ static void analyseArgs(TreeNode*, Args*);
 static Val requireType(TreeNode*, Type*, int);
 
 void analyseProgram(TreeNode* p) {
+    Assert(isSyntax(p, Program));
     getChilds(p);
     symbolTableInit();
     typesInit();
@@ -83,12 +84,14 @@ void analyseProgram(TreeNode* p) {
 }
 
 static void analyseExtDefList(TreeNode *p) {
+    Assert(isSyntax(p, ExtDefList));
     getChilds(p);
     analyseExtDef(childs[1]);
     if (childscnt == 2) analyseExtDefList(childs[2]);
 }
 
 static void analyseExtDef(TreeNode *p) {
+    Assert(isSyntax(p, ExtDef));
     getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
     if (isSyntax(childs[2], ExtDecList)) {
@@ -106,12 +109,14 @@ static void analyseExtDef(TreeNode *p) {
 }
 
 static void analyseExtDecList(TreeNode *p, Type *type) {
+    Assert(isSyntax(p, ExtDecList));
     getChilds(p);
     analyseVarDec(childs[1], type);
     if (childscnt == 3) analyseExtDecList(childs[3], type);
 }
 
 static Type *analyseSpecifier(TreeNode *p) {
+    Assert(isSyntax(p, Specifier));
     getChilds(p);
     if (isSyntax(childs[1], TYPE)) {
         if (strcmp(childs[1]->text, "INT")) return TYPE_INT;
@@ -123,6 +128,7 @@ static Type *analyseSpecifier(TreeNode *p) {
 }
 
 static Type *analyseStructSpecifier(TreeNode *p) {
+    Assert(isSyntax(p, StructSpecifier));
     getChilds(p);
     if (isSyntax(childs[2], Tag)) {
         return analyseTag(childs[2]);
@@ -137,6 +143,7 @@ static Type *analyseStructSpecifier(TreeNode *p) {
 }
 
 static void analyseOptTag(TreeNode *p, Type *type) {
+    Assert(isSyntax(p, OptTag));
     getChilds(p);
     Symbol *symbol = newStructSymbol(childs[1]->text, type);
     if (!symbolInsert(symbol))
@@ -144,6 +151,7 @@ static void analyseOptTag(TreeNode *p, Type *type) {
 }
 
 static Type *analyseTag(TreeNode *p) {
+    Assert(isSyntax(p, Tag));
     getChilds(p);
     Symbol *symbol = symbolFind(childs[1]->text);
     if (symbol == NULL || symbol->kind != STRUCT) {
@@ -154,6 +162,7 @@ static Type *analyseTag(TreeNode *p) {
 }
 
 static Field *analyseVarDec(TreeNode *p, Type *type) {
+    Assert(isSyntax(p, VarDec));
     getChilds(p);
     if (isSyntax(childs[1], ID)) {
         Field *dec = (Field*) malloc(sizeof(Field));
@@ -171,6 +180,7 @@ static Field *analyseVarDec(TreeNode *p, Type *type) {
 }
 
 static Symbol *analyseFunDec(TreeNode *p, Type *type, bool isdef) {
+    Assert(isSyntax(p, FunDec));
     getChilds(p);
     Func *func = newFunc(type);
     Symbol *symbol = symbolFind(childs[1]->text);
@@ -200,6 +210,7 @@ static Symbol *analyseFunDec(TreeNode *p, Type *type, bool isdef) {
 }
 
 static void analyseVarList(TreeNode *p, Args *args) {
+    Assert(isSyntax(p, VarList));
     getChilds(p);
     Arg *arg = analyseParamDec(childs[1]);
     listAddBefore(args, &arg->list);
@@ -207,12 +218,14 @@ static void analyseVarList(TreeNode *p, Args *args) {
 }
 
 static Arg *analyseParamDec(TreeNode *p) {
+    Assert(isSyntax(p, ParamDec));
     getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
     return analyseVarDec(childs[3], type);
 }
 
 static void analyseCompSt(TreeNode *p, Func *func) {
+    Assert(isSyntax(p, CompSt));
     getChilds(p);
     symbolStackPush();
     if (func != NULL) {
@@ -230,12 +243,14 @@ static void analyseCompSt(TreeNode *p, Func *func) {
 }
 
 static void analyseStmtList(TreeNode *p) {
+    Assert(isSyntax(p, StmtList));
     getChilds(p);
     analyseStmt(childs[1]);
     if (childscnt == 2) analyseStmtList(childs[2]);
 }
 
 static void analyseStmt(TreeNode *p) {
+    Assert(isSyntax(p, Stmt));
     getChilds(p);
     if (isSyntax(childs[1], Exp)) {
         analyseExp(childs[1]);
@@ -255,24 +270,28 @@ static void analyseStmt(TreeNode *p) {
 }
 
 static void analyseDefList(TreeNode *p, Fields *list) {
+    Assert(isSyntax(p, DefList));
     getChilds(p);
     analyseDef(childs[1], list);
     if (childscnt == 2) analyseDefList(childs[2], list);
 }
 
 static void analyseDef(TreeNode *p, Fields *list) {
+    Assert(isSyntax(p, Def));
     getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
     analyseDecList(childs[2], type, list);
 }
 
 static void analyseDecList(TreeNode *p, Type *type, Fields *list) {
+    Assert(isSyntax(p, DecList));
     getChilds(p);
     analyseDec(childs[1], type, list);
     if (childscnt == 3) analyseDecList(childs[3], type, list);
 }
 
 static void analyseDec(TreeNode *p, Type *type, Fields *list) {
+    Assert(isSyntax(p, Dec));
     getChilds(p);
     Field *dec = analyseVarDec(childs[1], type);
     if (list != NULL) {
@@ -325,6 +344,7 @@ static Val requireType(TreeNode *p, Type *type, int errorno) {
 }
 
 static Val analyseExp(TreeNode *p) {
+    Assert(isSyntax(p, Exp));
     getChilds(p);
     if (isSyntax(childs[1], Exp)) {
         if (isSyntax(childs[2], ASSIGNOP)) {
@@ -420,6 +440,7 @@ static Val analyseExp(TreeNode *p) {
 }
 
 static void analyseArgs(TreeNode *p, Args *args) {
+    Assert(isSyntax(p, Args));
     getChilds(p);
     Arg *arg = (Arg*) malloc(sizeof(Arg));
     arg->type = analyseExp(childs[1]).type;
