@@ -11,11 +11,22 @@ int yylex();
 do {\
     int tokennum = yyr2[yyn]; \
     yyval = newNode(); \
-    int i; \
+    int i, len = 0; \
     for (i = 1; i <= tokennum; i++) { \
         TreeNode *p = yyvsp[i - tokennum]; \
         if (i == 1) yyval->lineno = p->lineno; \
-        if (p != NULL) treeAddChild(yyval, p); \
+        if (p != NULL) { \
+            treeAddChild(yyval, p); \
+            len += 1 + strlen(p->text); \
+        } \
+    } \
+    List *q; \
+    char *s = yyval->text = malloc(len); \
+    listForeach(q, &yyval->child) { \
+        TreeNode *p = listEntry(q, TreeNode); \
+        if (q != yyval->child.next) *(s++) = ' '; \
+        strcpy(s, p->text); \
+        s += strlen(s); \
     } \
     yyval->name = (char*)(yytname[YYNTOKENS + type]); \
 } while (0)

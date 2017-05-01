@@ -330,7 +330,7 @@ static Val analyseExp(TreeNode *p) {
         if (isSyntax(childs[2], ASSIGNOP)) {
             Val left = analyseExp(childs[1]);
             if (!left.isvar)
-                semanticError(6,childs[1]->lineno, "");
+                semanticError(6, childs[1]->lineno, "");
             else {
                 requireType(childs[3], left.type, 5);
                 return left;
