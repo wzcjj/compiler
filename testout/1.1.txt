@@ -1,1 +1,0 @@
-Error type A at line 4: Mysterious character "~".

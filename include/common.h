@@ -5,7 +5,7 @@
 #define ASSERT
 #ifdef ASSERT
 #include <assert.h>
-#define Assert assert
+#define Assert(exp) assert(exp)
 #else
 #define Assert
 #endif

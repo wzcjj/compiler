@@ -16,7 +16,7 @@ YFC = $(GEN_DIR)/syntax.tab.c
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
-TESTFILE = 2.13
+TESTFILE = 2.8
 INPUT = testcase/$(TESTFILE).c
 OUTPUT = output.txt
 #OUTPUT = testout/$(TESTFILE).txt
@@ -61,7 +61,7 @@ run: $(TARGET)
 	$(TARGET) $(INPUT) $(OUTPUT)
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR) output.txt testout
 
 submit: clean
 	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011_lab2.tar.gz
@@ -75,4 +75,5 @@ commit:
 	@git commit --allow-empty
 
 test: $(TARGET)
+	@mkdir -p testout
 	./test.sh

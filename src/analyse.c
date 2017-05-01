@@ -121,7 +121,7 @@ static Type *analyseSpecifier(TreeNode *p) {
     Assert(isSyntax(p, Specifier));
     getChilds(p);
     if (isSyntax(childs[1], TYPE)) {
-        if (strcmp(childs[1]->text, "INT")) return TYPE_INT;
+        if (strcmp(childs[1]->text, "int") == 0) return TYPE_INT;
         else return TYPE_FLOAT;
     }
     else {
