@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "common.h"
 #include "symbol.h"
 
 static Type TYPE_INT_, TYPE_FLOAT_;
@@ -15,6 +16,8 @@ void typesInit() {
 }
 
 bool typeEqual(Type *a, Type *b) {
+    Assert(a != NULL);
+    Assert(b != NULL);
     if (a == b) return true;
     if (a->kind != b->kind) return false;
     List *p, *q;
@@ -39,6 +42,8 @@ bool typeEqual(Type *a, Type *b) {
 }
 
 bool argsEqual(Args *a, Args *b) {
+    Assert(a != NULL);
+    Assert(b != NULL);
     List *p = a->next, *q = b->next;
     while (p != a && q != b) {
         Arg *argp = listEntry(p, Arg);
@@ -51,10 +56,13 @@ bool argsEqual(Args *a, Args *b) {
 }
 
 bool funcEqual(Func *a, Func *b) {
+    Assert(a != NULL);
+    Assert(b != NULL);
     return typeEqual(a->rettype, b->rettype) && argsEqual(&a->args, &b->args);
 }
 
 void typeRelease(Type *type) {
+    Assert(type != NULL);
     if (type->kind == ARRAY) {
         typeRelease(type->array.elem);
         free(type);
@@ -72,6 +80,7 @@ void typeRelease(Type *type) {
 }
 
 void argsRelease(Args *args) {
+    Assert(args != NULL);
     while (!listIsEmpty(args)) {
         Arg *arg = listEntry(args->next, Arg);
         listDelete(&arg->list);
@@ -81,11 +90,14 @@ void argsRelease(Args *args) {
 }
 
 void funcRelease(Func *func) {
+    Assert(func != NULL);
     argsRelease(&func->args);
     free(func);
 }
 
 Field *fieldFind(Fields *structure, const char *fieldname) {
+    Assert(structure != NULL);
+    Assert(fieldname != NULL);
     List *p;
     listForeach(p, structure) {
         Field *field = listEntry(p, Field);
@@ -95,11 +107,13 @@ Field *fieldFind(Fields *structure, const char *fieldname) {
 }
 
 static Type *baseType(Type *type) {
+    Assert(type != NULL);
     if (type->kind != ARRAY) return type;
     else return baseType(type->array.elem);
 }
 
 static void typeArrayToStr(Type *type, char *s) {
+    Assert(type != NULL);
     if (type->kind == ARRAY) {
         sprintf(s, "[%d]", type->array.size);
         s += strlen(s);
@@ -108,6 +122,7 @@ static void typeArrayToStr(Type *type, char *s) {
 }
 
 static void typeToStr(Type *type, char *s) {
+    Assert(type != NULL);
     if (typeEqual(type, TYPE_INT)) strcpy(s, "int");
     else if (typeEqual(type, TYPE_FLOAT)) strcpy(s, "float");
     else if (type->kind == STRUCTURE) strcpy(s, "struct");
@@ -119,6 +134,7 @@ static void typeToStr(Type *type, char *s) {
 }
 
 void argsToStr(Args *list, char *s) {
+    Assert(list != NULL);
     Args *p;
     listForeach(p, list) {
         Arg *arg = listEntry(p, Arg);

@@ -100,7 +100,9 @@ static void analyseExtDef(TreeNode *p) {
     else if (isSyntax(childs[2], FunDec)) {
         bool isdef = isSyntax(childs[3], CompSt);
         Symbol *symbol = analyseFunDec(childs[2], type, isdef);
+        if (symbol == NULL) return;
         Func *func = symbol->func;
+        rettype = func->rettype;
         if (isdef) {
             analyseCompSt(childs[3], func);
             func->defined = true;
@@ -136,7 +138,8 @@ static Type *analyseStructSpecifier(TreeNode *p) {
     else {
         Type *type = (Type*) malloc(sizeof(Type));
         type->kind = STRUCTURE;
-        if (isSyntax(childs[childscnt - 1], DefList)) analyseDefList(childs[4], &type->structure);
+        listInit(&type->structure);
+        if (isSyntax(childs[childscnt - 1], DefList)) analyseDefList(childs[childscnt - 1], &type->structure);
         if (isSyntax(childs[2], OptTag)) analyseOptTag(childs[2], type);
         return type;
     }
@@ -145,6 +148,7 @@ static Type *analyseStructSpecifier(TreeNode *p) {
 static void analyseOptTag(TreeNode *p, Type *type) {
     Assert(isSyntax(p, OptTag));
     getChilds(p);
+    Assert(isSyntax(childs[1], ID));
     Symbol *symbol = newStructSymbol(childs[1]->text, type);
     if (!symbolInsert(symbol))
         semanticError(16, childs[1]->lineno, childs[1]->text);
@@ -213,6 +217,7 @@ static void analyseVarList(TreeNode *p, Args *args) {
     Assert(isSyntax(p, VarList));
     getChilds(p);
     Arg *arg = analyseParamDec(childs[1]);
+    Assert(arg != NULL);
     listAddBefore(args, &arg->list);
     if (childscnt == 3) analyseVarList(childs[3], args);
 }
@@ -221,7 +226,7 @@ static Arg *analyseParamDec(TreeNode *p) {
     Assert(isSyntax(p, ParamDec));
     getChilds(p);
     Type *type = analyseSpecifier(childs[1]);
-    return analyseVarDec(childs[3], type);
+    return analyseVarDec(childs[2], type);
 }
 
 static void analyseCompSt(TreeNode *p, Func *func) {
@@ -238,7 +243,7 @@ static void analyseCompSt(TreeNode *p, Func *func) {
         }
     }
     if (isSyntax(childs[2], DefList)) analyseDefList(childs[2], NULL);
-    if (isSyntax(childs[childscnt - 1], StmtList)) analyseStmtList(childs[3]);
+    if (isSyntax(childs[childscnt - 1], StmtList)) analyseStmtList(childs[childscnt - 1]);
     symbolStackPop();
 }
 
@@ -331,6 +336,7 @@ static Val makeVal(Type *type) {
 
 static Val requireBasic(TreeNode *p, int errorno) {
     Val val = analyseExp(p);
+    Assert(val.type != NULL);
     if (val.type->kind != BASIC)
         semanticError(errorno, p->lineno, p->text);
     return val;

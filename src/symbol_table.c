@@ -1,6 +1,7 @@
 //Copyright © 2017 wzcjj, Nanjing university
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
 #include "symbol.h"
 
 #define MASK 0x3fff
@@ -24,6 +25,7 @@ void symbolTableInit() {
 }
 
 static unsigned hashPJW(const char *name) {
+    Assert(name != NULL);
     unsigned val = 0;
     for (; *name; name++) {
         val = (val << 2) + *name;
@@ -34,6 +36,7 @@ static unsigned hashPJW(const char *name) {
 }
 
 void symbolRelease(Symbol *symbol) {
+    Assert(symbol != NULL);
     SymbolKind kind = symbol->kind;
     Type *type = symbol->type;
     if (kind == STRUCT) typeRelease(type);
@@ -46,6 +49,7 @@ void symbolStackPush() {
 }
 
 void symbolStackPop() {
+    Assert(stacktop > 0);
     List *top = stack + stacktop;
     while (!listIsEmpty(top)) {
         SymbolNode *p = listEntry3(top->next, SymbolNode, stack);
@@ -58,6 +62,7 @@ void symbolStackPop() {
 }
 
 Symbol *symbolFind(const char *name) {
+    Assert(name != NULL);
     unsigned val = hashPJW(name);
     List *p;
     listForeach(p, symboltable + val) {
@@ -73,6 +78,8 @@ static bool symbolAtStackTop(const char *name) {
 }
 
 bool symbolInsert(Symbol *symbol) {
+    Assert(symbol != NULL);
+    Assert(symbol->name != NULL);
     if (symbolAtStackTop(symbol->name)) return false;
     SymbolNode *p = (SymbolNode*) malloc(sizeof(SymbolNode));
     symbol->depth = stacktop;

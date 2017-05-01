@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     yyrestart(fin);
     yyparse();
     if (!errorstatus)
-        print(root, 0);
+        //print(root, 0);
         analyseProgram(root);
     return 0;
 }
