@@ -5,9 +5,9 @@
 #define ASSERT
 #ifdef ASSERT
 #include <assert.h>
-#define Assert(exp) assert(exp)
+#define Assert assert
 #else
-#define Assert
+#define Assert(exp)
 #endif
 char *toArray(const char *);
 
