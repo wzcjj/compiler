@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "list.h"
+#include "common.h"
 
 //Copyright © 2017 wzcjj, Nanjing university
 static void listAdd(List *prev, List *next, List *node) {
@@ -29,4 +30,15 @@ void listInit(List *list) {
 
 bool listIsEmpty(List *list) {
     return list == list->next;
+}
+
+void listMerge(List *first, List *second) {
+    Assert(first != NULL);
+    Assert(second != NULL);
+    Assert(first != second);
+    if (listIsEmpty(second)) return;
+    first->prev->next = second->next;
+    second->next->prev = first->prev;
+    first->prev = second->prev;
+    second->prev->next = first;
 }

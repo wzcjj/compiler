@@ -17,13 +17,10 @@ typedef struct List {
     for ((p) = (head)->next; (p) != (head); (p) = (p)->next)
 
 void listAddBefore(List*, List*);
-
 void listAddAfter(List*, List*);
-
 void listDelete(List*);
-
 void listInit(List*);
-
 bool listIsEmpty(List*);
+void listMerge(List*, List*);
 
 #endif
