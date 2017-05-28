@@ -35,4 +35,30 @@ Operand *tempOperand(int);
 Operand *labelOperand(int);
 char *operandToStr(Operand*);
 
+// intercode
+typedef enum {
+    LABEL, FUNCTION, ASSIGN, ADD, SUB, MUL, DIV,
+    GET_REF, GET_ADDR, SET_ADDR, GOTO, GOTO_WITH_COND,
+    RETURN, DEC, ARG, CALL, PARAM, READ, WRITE
+} InterCodeKind;
+typedef struct InterCode {
+    InterCodeKind kind;
+    Operand *res, *op1, *op2;
+    union {
+        char *relop;
+        int size;
+    };
+    List list;
+} InterCode;
+
+typedef List InterCodes;
+InterCode *newInterCode3(InterCodeKind, Operand*, Operand*, Operand*);
+InterCode *newInterCode2(InterCodeKind, Operand*, Operand*);
+InterCode *newInterCode1(InterCodeKind, Operand*);
+void interCodeToStr(InterCode*, char*);
+void interCodesPrint(InterCodes*);
+InterCodes *newInterCodes();
+InterCodes *interCodeInsert(InterCodes*, InterCode*);
+InterCodes *interCodesBind(InterCodes*, InterCodes*);
+
 #endif
