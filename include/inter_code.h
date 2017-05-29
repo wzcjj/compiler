@@ -37,7 +37,7 @@ char *operandToStr(Operand*);
 
 // intercode
 typedef enum {
-    LABEL, FUNCTION, ASSIGN, ADD, SUB, MUL, DIV,
+    DEF_LABEL, DEF_FUNCTION, ASSIGN, ADD, SUB, MUL, DIV,
     GET_REF, GET_ADDR, SET_ADDR, GOTO, GOTO_WITH_COND,
     RETURN, DEC, ARG, CALL, PARAM, READ, WRITE
 } InterCodeKind;
