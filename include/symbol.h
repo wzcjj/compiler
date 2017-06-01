@@ -2,6 +2,7 @@
 #define COMPILER_SYMBOL_H
 //Copyright © 2017 wzcjj, Nanjing university
 #include "list.h"
+#include "inter_code.h"
 
 //symbol_type
 typedef enum {
@@ -59,6 +60,7 @@ typedef struct Symbol {
         Type *type;
         Func *func;
     };
+    int id;
     int depth;
 } Symbol;
 
@@ -75,5 +77,6 @@ Symbol *newVarSymbol(const char*, Type*);
 Symbol *newFuncSymbol(const char*, Func*);
 Symbol *newStructSymbol(const char*, Type*);
 Func *newFunc(Type*);
+Operand *symbolGetOperand(Symbol);
 
 #endif

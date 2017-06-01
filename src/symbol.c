@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include "common.h"
 #include "symbol.h"
+#include "inter_code.h"
 
 static Symbol *newSymbol(SymbolKind kind, const char *name) {
     Symbol *symbol = (Symbol*) malloc(sizeof(Symbol));
     symbol->kind = kind;
     symbol->name = toArray(name);
+    symbol->id = -1;
     return symbol;
 }
 
@@ -34,3 +36,7 @@ Func *newFunc(Type *rettype) {
     return func;
 }
 
+Operand *symbolGetOperand(Symbol *symbol) {
+    if (symbol->id < 0) symbol->id = newVarOperandId();
+    return varOperand(symbol->id);
+}

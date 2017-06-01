@@ -4,18 +4,10 @@
 #include "common.h"
 #include "symbol.h"
 #include "syntax_tree.h"
+#include "translate.h"
 
 #define isSyntax(p, token) \
     ((p) != NULL && strcmp((p)->name, #token) == 0)
-#define getChilds(node) \
-    TreeNode *childs[10]; \
-    int childscnt = 0; \
-    do { \
-        List *pointer; \
-        listForeach(pointer, &(node)->child) { \
-            childs[++childscnt] = listEntry(pointer, TreeNode); \
-        } \
-    } while (0)
 
 #define semanticError(errorno, lineno, ...) \
     do { \
@@ -106,6 +98,8 @@ static void analyseExtDef(TreeNode *p) {
         if (isdef) {
             analyseCompSt(childs[3], func);
             func->defined = true;
+            InterCodes *irs = interCodeStackGet();
+            defFunc(symbol->name, irs);
         }
     }
 }
@@ -233,6 +227,7 @@ static void analyseCompSt(TreeNode *p, Func *func) {
     Assert(isSyntax(p, CompSt));
     getChilds(p);
     symbolStackPush();
+    interCodeStackPush();
     if (func != NULL) {
         List *q;
         listForeach(q, &func->args) {
@@ -244,6 +239,9 @@ static void analyseCompSt(TreeNode *p, Func *func) {
     }
     if (isSyntax(childs[2], DefList)) analyseDefList(childs[2], NULL);
     if (isSyntax(childs[childscnt - 1], StmtList)) analyseStmtList(childs[childscnt - 1]);
+    InterCodes *irs = translateCompSt(p, func);
+    interCodeStackPop();
+    interCodeStackInsert(irs);
     symbolStackPop();
 }
 
