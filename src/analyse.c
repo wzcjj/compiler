@@ -6,9 +6,6 @@
 #include "syntax_tree.h"
 #include "translate.h"
 
-#define isSyntax(p, token) \
-    ((p) != NULL && strcmp((p)->name, #token) == 0)
-
 #define semanticError(errorno, lineno, ...) \
     do { \
         errorstatus = 2; \

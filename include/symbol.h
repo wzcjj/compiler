@@ -77,6 +77,6 @@ Symbol *newVarSymbol(const char*, Type*);
 Symbol *newFuncSymbol(const char*, Func*);
 Symbol *newStructSymbol(const char*, Type*);
 Func *newFunc(Type*);
-Operand *symbolGetOperand(Symbol);
+Operand *symbolGetOperand(Symbol*);
 
 #endif
