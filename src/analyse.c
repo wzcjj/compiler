@@ -230,6 +230,7 @@ static void analyseCompSt(TreeNode *p, Func *func) {
         listForeach(q, &func->args) {
             Arg *arg = listEntry(q, Arg);
             Symbol *symbol = newVarSymbol(arg->name, arg->type);
+            if (arg->type->kind != BASIC) symbol->isref = true;
             if (!symbolInsert(symbol))
                 semanticError(3, p->lineno, symbol->name);
         }

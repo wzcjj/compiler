@@ -147,3 +147,35 @@ void argsToStr(Args *list, char *s) {
     }
     *s = 0;
 }
+
+int typeSize(Type *type) {
+    Assert(type != NULL);
+    int size = 0;
+    List *p;
+    switch (type->kind) {
+    case BASIC:
+        return 4;
+    case ARRAY:
+        return typeSize(type->array.elem) *type->array.size;
+    case STRUCTURE:
+        listForeach(p, &type->structure) {
+            Field *field = listEntry(p, Field);
+            size += typeSize(field->type);
+        }
+        return size;
+    }
+    return 0;
+}
+
+int fieldOffest(Fields *structure, const char *fieldname) {
+    Assert(structure != NULL);
+    Assert(fieldname != NULL);
+    int offest = 0;
+    List *p;
+    listForeach(p, structure) {
+        Field *field = listEntry(p, Field);
+        if (strcmp(field->name, fieldname) == 0) return offest;
+        offest += typeSize(field->type);
+    }
+    return -1;
+}

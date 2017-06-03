@@ -49,6 +49,8 @@ void typeRelease(Type*);
 
 void argsToStr(Args*, char*);
 Field *fieldFind(Fields *, const char *);
+int fieldOffest(Fields*, const char *);
+int typeSize(Type*);
 
 typedef enum {
     VAR, STRUCT, FUNC
@@ -61,6 +63,7 @@ typedef struct Symbol {
         Func *func;
     };
     int id;
+    bool isref;
     int depth;
 } Symbol;
 

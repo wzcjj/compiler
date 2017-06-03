@@ -141,6 +141,11 @@ static InterCodes *translateDec(TreeNode *p) {
     Symbol *symbol = symbolFind(varDecToStr(childs[1]));
     InterCodes *irs = newInterCodes();
     Operand *var = symbolGetOperand(symbol);
+    if (symbol->type->kind != BASIC) {
+        InterCode *ir = newInterCode1(DEC, var);
+        ir->size = typeSize(symbol->type);
+        interCodeInsert(irs, ir);
+    }
     if (childscnt == 3) {
         Operand *op = newTempOperand();
         interCodesBind(irs, translateExp(childs[3], op));
@@ -251,6 +256,138 @@ static InterCodes *translateCond(TreeNode *p, Operand *labeltrue,
     }
 }
 
+InterCodes *translateExp(TreeNode *p, Operand *res) {
+    Assert(isSyntax(p, Exp));
+    getChilds(p);
+    static Type *type = NULL;
+    InterCodes *irs = newInterCodes();
+    if (isSyntax(childs[1], ID)) {
+        Symbol *symbol = symbolFind(childs[1]->text);
+        if (childscnt == 1) {
+            if (res == NULL) return irs;
+            Operand *op = symbolGetOperand(symbol);
+            type = symbol->type;
+            if (res->id < 0 && type->kind != BASIC) {
+                res->id = newTempOperandId();
+                if (symbol->isref) {
+                    interCodeInsert(irs, newInterCode2(ASSIGN, res, op));
+                }
+                else {
+                    interCodeInsert(irs, newInterCode2(GET_REF, res, op));
+                }
+            }
+            else {
+                *res = *op;
+            }
+        }
+    }
+    else if (isSyntax(childs[1], INT)) {
+        if (!res) return irs;
+        *res = *constOperand(childs[1]->intval);
+        type = TYPE_INT;
+    }
+    else if (isSyntax(childs[2], LB)) {
+        Operand *index = newTempOperand();
+        interCodesBind(irs, translateExp(childs[3], index));
+        Operand *base = tempOperand(-1);
+        interCodesBind(irs, translateExp(childs[1], base));
+        Assert(type->kind == ARRAY);
+        type = type->array.elem;
+        Operand *offest = newTempOperand();
+        Operand *size = constOperand(typeSize(type));
+        interCodeInsert(irs, newInterCode3(MUL, offest, index, size));
+        if (res->id < 0) {
+            res->id = newTempOperandId();
+            interCodeInsert(irs, newInterCode3(ADD, res, base, offest));
+        }
+        else {
+            Operand *tmp = newTempOperand();
+            interCodeInsert(irs, newInterCode3(ADD, tmp, base, offest));
+            interCodeInsert(irs, newInterCode2(GET_ADDR, res, tmp));
+        }
+    }
+    else if (isSyntax(childs[2], DOT)) {
+        char *id = childs[3]->text;
+        Operand *base = tempOperand(-1);
+        interCodesBind(irs, translateExp(childs[1], base));
+        Assert(type->kind == STRUCTURE);
+        Field *field = fieldFind(&type->structure, id);
+        Assert(field != NULL);
+        Operand *offest = constOperand(fieldOffest(&type->structure, id));
+        type = field->type;
+        if (res->id < 0) {
+            res->id = newTempOperandId();
+            interCodeInsert(irs, newInterCode3(ADD, res, base, offest));
+        }
+        else {
+            Operand *tmp = newTempOperand();
+            interCodeInsert(irs, newInterCode3(ADD, tmp, base, offest));
+            interCodeInsert(irs, newInterCode2(GET_ADDR, res, tmp));
+        }
+    }
+    else if (isSyntax(childs[1], LP)) {
+        free(irs);
+        return translateExp(childs[2], res);
+    }
+    else if (isSyntax(childs[1], NOT) || isSyntax(childs[2], RELOP) ||
+             isSyntax(childs[2], AND) || isSyntax(childs[2], OR)) {
+        Operand *label1 = newLabelOperand();
+        Operand *label2 = newLabelOperand();
+        InterCodes *condirs = translateCond(p, label1, label2);
+        if (!res) res = newTempOperand();
+        interCodeInsert(irs, newInterCode2(ASSIGN, res, CONST_ZERO));
+        interCodesBind(irs, condirs);
+        interCodeInsert(irs, newInterCode1(DEF_LABEL, label1));
+        interCodeInsert(irs, newInterCode2(ASSIGN, res, CONST_ONE));
+        interCodeInsert(irs, newInterCode1(DEF_LABEL, label2));
+        type = TYPE_INT;
+    }
+    else if (isSyntax(childs[1], MINUS)) {
+        Operand *op = newTempOperand();
+        InterCodes *expirs = translateExp(childs[2], op);
+        interCodesBind(irs, expirs);
+        if (!res) return irs;
+        InterCode *ir = newInterCode3(SUB, res, CONST_ZERO, op);
+        interCodeInsert(irs, ir);
+    }
+    else if (isSyntax(childs[2], ASSIGNOP)) {
+        Operand *op1 = tempOperand(-1);
+        Operand *op2 = newTempOperand();
+        InterCodes *irs1 = translateExp(childs[1], op1);
+        InterCodes *irs2 = translateExp(childs[3], op2);
+        interCodesBind(irs, irs1);
+        interCodesBind(irs, irs2);
+        InterCode *ir = (op1->kind == VARIABLE) ?
+            newInterCode2(ASSIGN, op1, op2) :
+            newInterCode2(SET_ADDR, op1, op2);
+        interCodeInsert(irs, ir);
+        if (!res) return irs;
+        if (res->id < 0) {
+            *res = *op1;
+        }
+        else {
+            interCodeInsert(irs, newInterCode2(GET_ADDR, res, op1));
+        }
+    }
+    else {
+        Operand *op1 = newTempOperand();
+        Operand *op2 = newTempOperand();
+        InterCodes *irs1 = translateExp(childs[1], op1);
+        InterCodes *irs2 = translateExp(childs[3], op2);
+        interCodesBind(irs, irs1);
+        interCodesBind(irs, irs2);
+        InterCodeKind kind = ADD;
+        if (!res) return irs;
+        if (isSyntax(childs[2], PLUS)) kind = ADD;
+        else if (isSyntax(childs[2], MINUS)) kind = SUB;
+        else if (isSyntax(childs[2], STAR)) kind = MUL;
+        else if (isSyntax(childs[2], DIV)) kind = DIV;
+        InterCode *ir = newInterCode3(kind, res, op1, op2);
+        interCodeInsert(irs, ir);
+    }
+    return irs;
+}
+
 static InterCodes *translateArgs(TreeNode *p, List *curarg, Args *args) {
     Assert(isSyntax(p, Args));
     getChilds(p);
@@ -258,7 +395,7 @@ static InterCodes *translateArgs(TreeNode *p, List *curarg, Args *args) {
     if (childscnt == 3)
         restirs = translateArgs(childs[3], curarg->next, args);
     Arg *arg = listEntry(curarg, Arg);
-    Operand *op = newTempOperand();
+    Operand *op = (arg->type->kind == BASIC) ? newTempOperand() : tempOperand(-1);
     InterCodes *irs = translateExp(childs[1], op);
     if (restirs) irs = interCodesBind(restirs, irs);
     OperandList *operandnode = (OperandList*) malloc(sizeof(OperandList));
