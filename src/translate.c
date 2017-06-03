@@ -15,7 +15,7 @@ typedef struct InterCodeList {
     InterCodes *head;
 } InterCodeList;
 
-void interCodesInit() {
+void interCodeInit() {
     listInit(&head);
     listInit(stack);
     top = 0;
@@ -46,7 +46,7 @@ InterCodes *interCodeStackGet() {
     return listhead;
 }
 
-InterCodes *interCodesGet() {
+InterCodes *interCodeGet() {
     return &head;
 }
 

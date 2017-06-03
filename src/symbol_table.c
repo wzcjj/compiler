@@ -22,6 +22,15 @@ void symbolTableInit() {
         listInit(symboltable + i);
         listInit(stack + i);
     }
+    Func *readfunc = newFunc(TYPE_INT);
+    Symbol *read = newFuncSymbol("read", readfunc);
+    symbolInsert(read);
+    Func *writefunc = newFunc(TYPE_INT);
+    Arg *param = (Arg*) malloc(sizeof(Arg));
+    param->type = TYPE_INT;
+    listAddBefore(&writefunc->args, &param->list);
+    Symbol *write = newFuncSymbol("write", writefunc);
+    symbolInsert(write);
 }
 
 static unsigned hashPJW(const char *name) {

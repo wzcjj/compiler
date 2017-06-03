@@ -67,7 +67,6 @@ static Val requireType(TreeNode*, Type*, int);
 void analyseProgram(TreeNode* p) {
     Assert(isSyntax(p, Program));
     getChilds(p);
-    symbolTableInit();
     typesInit();
     analyseExtDefList(childs[1]);
 }
