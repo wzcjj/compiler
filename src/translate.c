@@ -168,7 +168,7 @@ static InterCodes *translateStmt(TreeNode *p) {
     if (isSyntax(childs[1], Exp)) {
         return translateExp(childs[1], NULL);
     }
-    else if (isSyntax(childs[1], CopmSt)) {
+    else if (isSyntax(childs[1], CompSt)) {
         return interCodeStackGet();
     }
     else if (isSyntax(childs[1], RETURN)) {
@@ -217,6 +217,7 @@ static InterCodes *translateStmt(TreeNode *p) {
 
 static InterCodes *translateCond(TreeNode *p, Operand *labeltrue,
                                  Operand *labelfalse) {
+    if (!isSyntax(p, Exp)) printf("%s %d\n", p->name, p->token);
     Assert(isSyntax(p, Exp));
     getChilds(p);
     if (isSyntax(childs[1], NOT)) {

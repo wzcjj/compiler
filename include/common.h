@@ -4,6 +4,7 @@
 //Copyright © 2017 wzcjj, Nanjing university
 #define ASSERT
 #ifdef ASSERT
+#include <stdio.h>
 #include <assert.h>
 #define Assert assert
 #else
