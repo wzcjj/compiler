@@ -233,6 +233,7 @@ static void analyseCompSt(TreeNode *p, Func *func) {
             if (!symbolInsert(symbol))
                 semanticError(3, p->lineno, symbol->name);
         }
+        defParams(func);
     }
     if (isSyntax(childs[2], DefList)) analyseDefList(childs[2], NULL);
     if (isSyntax(childs[childscnt - 1], StmtList)) analyseStmtList(childs[childscnt - 1]);
