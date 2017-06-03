@@ -280,6 +280,49 @@ InterCodes *translateExp(TreeNode *p, Operand *res) {
                 *res = *op;
             }
         }
+        else {
+            Assert(symbol->kind == FUNC);
+            Args args;
+            listInit(&args);
+            if (isSyntax(childs[3], Args)) {
+                List *firstarg = symbol->func->args.next;
+                interCodesBind(irs, translateArgs(childs[3], firstarg, &args));
+            }
+            if (strcmp(symbol->name, "read") == 0) {
+                if (!res) res = newTempOperand();
+                InterCode *ir = newInterCode1(READ, res);
+                interCodeInsert(irs, ir);
+            }
+            else if (strcmp(symbol->name, "write") == 0) {
+                Operand *op = listEntry(args.next, OperandList)->op;
+                InterCode *ir = newInterCode1(WRITE, op);
+                interCodeInsert(irs, ir);
+                if (res) {
+                    op = constOperand(0);
+                    ir = newInterCode2(ASSIGN, res, op);
+                    interCodeInsert(irs, ir);
+                }
+            }
+            else {
+                List *q;
+                listForeach(q, &args) {
+                    Operand *op = listEntry(q, OperandList)->op;
+                    InterCode *ir = newInterCode1(ARG, op);
+                    interCodeInsert(irs,ir);
+                }
+                if (!res) res = newTempOperand();
+                Operand *op = newFuncOperand(childs[1]->text);
+                InterCode *ir = newInterCode2(CALL, res, op);
+                interCodeInsert(irs,ir);
+            }
+            while (!listIsEmpty(&args)) {
+                List *q = args.next;
+                OperandList *operandnode = listEntry(q, OperandList);
+                listDelete(q);
+                free(operandnode);
+            }
+            type = symbol->func->rettype;
+        }
     }
     else if (isSyntax(childs[1], INT)) {
         if (!res) return irs;
