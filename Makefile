@@ -61,10 +61,10 @@ run: $(TARGET)
 	$(TARGET) $(INPUT) $(OUTPUT)
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GEN_DIR) output.txt testout
+	rm -rf $(OBJ_DIR) $(GEN_DIR) output.txt testout
 
 submit: clean
-	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011_lab2.tar.gz
+	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > 141250011_lab3.tar.gz
 
 push:
 	$(call git_commit, "push")
