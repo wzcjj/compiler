@@ -2,6 +2,7 @@
 #include "common.h"
 #include "syntax_tree.h"
 #include "translate.h"
+#include "mips.h"
 //Copyright © 2017 wzcjj, Nanjing university
 extern FILE* yyin;
 void yyrestart(FILE*);
@@ -14,6 +15,7 @@ void init() {
     typesInit();
     operandInit();
     interCodeInit();
+    mipsInit();
 }
 
 int main(int argc, char** argv) {

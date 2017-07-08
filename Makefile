@@ -16,7 +16,7 @@ YFC = $(GEN_DIR)/syntax.tab.c
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 TARGET = $(BIN_DIR)/parser
-TESTFILE = 3.4
+TESTFILE = 4.1
 INPUT = testcase/$(TESTFILE).c
 OUTPUT = output.txt
 #OUTPUT = testout/$(TESTFILE).txt

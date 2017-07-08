@@ -1,3 +1,5 @@
+//Copyright © 2017 wzcjj, Nanjing university
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
