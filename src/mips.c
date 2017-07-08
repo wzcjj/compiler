@@ -43,6 +43,8 @@ static char stringforconst[10];
 static void mipsRead();
 static void mipsWrite();
 static char *getReg(Operand*);
+static int argnum;
+static Operand *regs[32] = { NULL };
 
 void mipsInit() {
     printf("\
@@ -107,6 +109,12 @@ static void mipsTranslate(InterCode *ic) {
     }
     else if (kind == CALL) {
         printf(MIPS[kind], getReg(op1), getReg(res));
+        int i;
+        for (i = 0; i < argnum; i++) {
+            printf("  lw $a%d, %d($sp)\n", i, i << 2);
+        }
+        printf("  lw $ra, %d($sp)\n", argnum << 2);
+        printf("  addi $sp, $sp, 8\n");
     }
     else if (kind == GOTO_WITH_COND) {
         char *relop = ic->relop;
@@ -127,6 +135,23 @@ static void mipsTranslate(InterCode *ic) {
         }
         else printf(MIPS[kind], getReg(res));
     }
+    else if (kind == PARAM) {
+        regs[4 + argnum] = res;
+        argnum++;
+    }
+    else if (kind == ARG) {
+        printf("  addi $sp, $sp, -%d\n", (argnum + 1) << 2);
+        int i;
+        for (i = 0; i < argnum; i++) {
+            printf("  sw $a%d, %d($sp)\n", i, i << 2);
+        }
+        printf("  sw $ra, %d($sp)\n", argnum << 2);
+    }
+    else if (kind == DEF_FUNCTION) {
+        argnum = 0;
+        printf(MIPS[kind], getReg(res));
+        Assert(0);
+    }
     else {
         printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
     }
@@ -142,8 +167,16 @@ void mipsMainLoop() {
 }
 
 static int regnum = 0;
-static Operand *ops[10];
-static char *regs[] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8"}; 
+static char *REG_NAME[] = {
+    "$zero", "$at", "$v0", "$v1",
+    "$a0", "$a1", "$a2", "$a3",
+    "$t0", "$t1", "$t2", "$t3",
+    "$t4", "$t5", "$t6", "$t7",
+    "$s0", "$s1", "$s2", "$s3",
+    "$s4", "$s5", "$s6", "$s7",
+    "$t8", "$t9", "$k0", "$k1",
+    "$gp", "$sp", "$fp", "$ra"
+};
 
 bool opEqual(Operand *op1, Operand *op2) {
     if (op1->kind != op2->kind) return false;
@@ -159,10 +192,12 @@ static char *getReg(Operand *op) {
     }
     else {
         int i;
-        for (i = 1; i <= regnum; i++)
-            if (opEqual(ops[i], op)) return regs[i];
-        ops[++regnum] = op;
-        return regs[regnum];
+        for (i = 0; i < 32; i++)
+            if (opEqual(regs[i], op)) return REG_NAME[i];
+        regnum++;
+        regnum &= 7;
+        regs[regnum + 8] = op;
+        return REG_NAME[regnum + 8];
     }
     return "";
 }
