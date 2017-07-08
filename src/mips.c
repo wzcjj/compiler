@@ -150,7 +150,6 @@ static void mipsTranslate(InterCode *ic) {
     else if (kind == DEF_FUNCTION) {
         argnum = 0;
         printf(MIPS[kind], getReg(res));
-        Assert(0);
     }
     else {
         printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
@@ -179,6 +178,7 @@ static char *REG_NAME[] = {
 };
 
 bool opEqual(Operand *op1, Operand *op2) {
+    if (op1 == NULL || op2 == NULL) return false;
     if (op1->kind != op2->kind) return false;
     return op1->id == op2->id;
 }
