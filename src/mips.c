@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "inter_code.h"
+#include <string.h>
 #include <stdlib.h>
 
 static const char *MIPS[] = {
@@ -15,12 +16,12 @@ static const char *MIPS[] = {
     "",
     "  lw %s, 0(%s)\n",
     "  sw %s, 0(%s)\n",
-    "  j %s",
-    "",
+    "  j %s\n",
+    " %s, %s, %s\n",
     "  move $v0, %s\n  jr $ra\n",
     "",
     "",
-    "  jal %s\n  move %s, $v0",
+    "  jal %s\n  move %s, $v0\n",
     "",
     "\
   addi $sp, $sp, -4\n\
@@ -81,19 +82,18 @@ static void mipsTranslate(InterCode *ic) {
     Operand *res = ic->res, *op1 = ic->op1, *op2 = ic->op2;
     int kind = ic->kind;
     if (kind == ASSIGN) {
-        if (op1->kind == CONSTANT) printf("li");
-        else printf("move");
+        if (op1->kind == CONSTANT) printf("  li");
+        else printf("  move");
         printf(MIPS[kind], getReg(res), getReg(op1));
     }
     else if (kind == ADD) {
-        Assert(0);
-        if (op2->kind == CONSTANT) printf("addi");
-        else printf("add");
+        if (op2->kind == CONSTANT) printf("  addi");
+        else printf("  add");
         printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
     }
     else if (kind == SUB) {
-        if (op2->kind == CONSTANT) printf("addi");
-        else printf("sub");
+        if (op2->kind == CONSTANT) printf("  addi");
+        else printf("  sub");
         printf(MIPS[kind], getReg(res), getReg(op1));
         if (op2->kind == CONSTANT) printf("-");
         printf("%s\n", getReg(op2));
@@ -106,6 +106,18 @@ static void mipsTranslate(InterCode *ic) {
     }
     else if (kind == CALL) {
         printf(MIPS[kind], getReg(op1), getReg(res));
+    }
+    else if (kind == GOTO_WITH_COND) {
+        char *relop = ic->relop;
+        printf("  ");
+        if (strcmp(relop, "==")) printf("beq");
+        else if (strcmp(relop, "!=")) printf("bne");
+        else if (strcmp(relop, ">")) printf("bgt");
+        else if (strcmp(relop, "<")) printf("blt");
+        else if (strcmp(relop, ">=")) printf("bge");
+        else if (strcmp(relop, "<=")) printf("ble");
+        else Assert(0);
+        printf(MIPS[kind], getReg(op1), getReg(op2), getReg(res));
     }
     else {
         printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
@@ -131,7 +143,7 @@ static char *getReg(Operand *op) {
         return stringforconst;
     }
     else {
-        if (op->reg) {
+        if (op->reg != NULL) {
             return op->reg;
         }
         else {
