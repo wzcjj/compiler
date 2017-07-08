@@ -16,6 +16,7 @@ typedef struct Operand {
         char *name;
     };
     char *text;
+    char *reg;
 } Operand;
 extern Operand *const CONST_ZERO;
 extern Operand *const CONST_ONE;
@@ -60,5 +61,6 @@ void interCodesPrint(InterCodes*);
 InterCodes *newInterCodes();
 InterCodes *interCodeInsert(InterCodes*, InterCode*);
 InterCodes *interCodesBind(InterCodes*, InterCodes*);
+InterCodes *getInterCodesHead();
 
 #endif

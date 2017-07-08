@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "inter_code.h"
+#include <stdlib.h>
 
 static const char *MIPS[] = {
     "%s:\n",
@@ -36,9 +37,10 @@ static const char *MIPS[] = {
   addi $sp, $sp, 4\n"
 };
 
+static char stringforconst[10];
 static void mipsRead();
 static void mipsWrite();
-static char *getreg(Operand*);
+static char *getReg(Operand*);
 
 void mipsInit() {
     printf("\
@@ -74,19 +76,44 @@ write:\n\
   jr $ra\n\n");
 }
 
-static void mipsDefLabel(Operand *label) {
-    printf("label%d:\n",label->id);
-}
-
 static void mipsTranslate(InterCode *ic) {
-    if (ic->kind == ADD) {
-        if (ic->op1->kind == CONSTANT) printf("li");
+    Assert(ic != NULL);
+    Operand *res = ic->res, *op1 = ic->op1, *op2 = ic->op2;
+    int kind = ic->kind;
+    if (kind == ASSIGN) {
+        if (op1->kind == CONSTANT) printf("li");
         else printf("move");
-        printf(MIPS[ic->kind], getreg(ic->res), getreg(ic->op1));
+        printf(MIPS[kind], getReg(res), getReg(op1));
+    }
+    else if (kind == ADD) {
+        Assert(0);
+        if (op2->kind == CONSTANT) printf("addi");
+        else printf("add");
+        printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
+    }
+    else if (kind == SUB) {
+        if (op2->kind == CONSTANT) printf("addi");
+        else printf("sub");
+        printf(MIPS[kind], getReg(res), getReg(op1));
+        if (op2->kind == CONSTANT) printf("-");
+        printf("%s\n", getReg(op2));
+    }
+    else if (kind == DIV) {
+        printf(MIPS[kind], getReg(op1), getReg(op2), getReg(res));
+    }
+    else if (kind == SET_ADDR) {
+        printf(MIPS[kind], getReg(op1), getReg(res));
+    }
+    else if (kind == CALL) {
+        printf(MIPS[kind], getReg(op1), getReg(res));
+    }
+    else {
+        printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
     }
 }
 
-void mipsMainLoop(InterCodes *Listhead) {
+void mipsMainLoop() {
+    InterCodes *Listhead = getInterCodesHead();
     List *p;
     listForeach(p, Listhead) {
         InterCode *q = listEntry(p, InterCode);
@@ -94,6 +121,24 @@ void mipsMainLoop(InterCodes *Listhead) {
     }
 }
 
-static char *getreg(Operand *op) {
+static int regnum = 0;
+
+static char *getReg(Operand *op) {
+    if (op == NULL) return "";
+    if (op->kind == LABEL || op->kind == FUNCTION) return operandToStr(op);
+    else if (op->kind == CONSTANT) {
+        sprintf(stringforconst, "%d", op->value);
+        return stringforconst;
+    }
+    else {
+        if (op->reg) {
+            return op->reg;
+        }
+        else {
+            op->reg = (char*) malloc(4);
+            sprintf(op->reg, "$t%d", ++regnum);
+            return op->reg;
+        }
+    }
     return "";
 }

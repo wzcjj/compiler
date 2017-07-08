@@ -15,6 +15,10 @@ typedef struct InterCodeList {
     InterCodes *head;
 } InterCodeList;
 
+InterCodes *getInterCodesHead() {
+    return &head;
+}
+
 void interCodeInit() {
     listInit(&head);
     listInit(stack);

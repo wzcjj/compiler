@@ -4,5 +4,6 @@
 #define COMPILER_MIPS_H
 
 void mipsInit();
+void mipsMainLoop();
 
 #endif
