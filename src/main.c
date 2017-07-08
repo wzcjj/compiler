@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     if (!errorstatus) {
         //print(root, 0);
         analyseProgram(root);
-        interCodesPrint(interCodeGet());
+        //interCodesPrint(interCodeGet());
         mipsMainLoop();
     }
     return 0;

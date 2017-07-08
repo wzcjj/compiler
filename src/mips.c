@@ -31,6 +31,7 @@ static const char *MIPS[] = {
   addi $sp, $sp, 4\n\
   move %s, $v0\n",
     "\
+  move $a0, %s\n\
   addi $sp, $sp, -4\n\
   sw $ra, 0($sp)\n\
   jal write\n\
@@ -74,7 +75,7 @@ write:\n\
   la $a0, _ret\n\
   syscall\n\
   move $v0, $0\n\
-  jr $ra\n\n");
+  jr $ra\n");
 }
 
 static void mipsTranslate(InterCode *ic) {
@@ -110,14 +111,21 @@ static void mipsTranslate(InterCode *ic) {
     else if (kind == GOTO_WITH_COND) {
         char *relop = ic->relop;
         printf("  ");
-        if (strcmp(relop, "==")) printf("beq");
-        else if (strcmp(relop, "!=")) printf("bne");
-        else if (strcmp(relop, ">")) printf("bgt");
-        else if (strcmp(relop, "<")) printf("blt");
-        else if (strcmp(relop, ">=")) printf("bge");
-        else if (strcmp(relop, "<=")) printf("ble");
+        if (strcmp(relop, "==") == 0) printf("beq");
+        else if (strcmp(relop, "!=") == 0) printf("bne");
+        else if (strcmp(relop, ">") == 0) printf("bgt");
+        else if (strcmp(relop, "<") == 0) printf("blt");
+        else if (strcmp(relop, ">=") == 0) printf("bge");
+        else if (strcmp(relop, "<=") == 0) printf("ble");
         else Assert(0);
         printf(MIPS[kind], getReg(op1), getReg(op2), getReg(res));
+    }
+    else if (kind == RETURN) {
+        if (res->kind == CONSTANT) {
+            printf("  li $t1, %s\n",getReg(res));
+            printf(MIPS[kind], "$t1");
+        }
+        else printf(MIPS[kind], getReg(res));
     }
     else {
         printf(MIPS[kind], getReg(res), getReg(op1), getReg(op2));
@@ -134,6 +142,13 @@ void mipsMainLoop() {
 }
 
 static int regnum = 0;
+static Operand *ops[10];
+static char *regs[] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8"}; 
+
+bool opEqual(Operand *op1, Operand *op2) {
+    if (op1->kind != op2->kind) return false;
+    return op1->id == op2->id;
+}
 
 static char *getReg(Operand *op) {
     if (op == NULL) return "";
@@ -143,14 +158,11 @@ static char *getReg(Operand *op) {
         return stringforconst;
     }
     else {
-        if (op->reg != NULL) {
-            return op->reg;
-        }
-        else {
-            op->reg = (char*) malloc(4);
-            sprintf(op->reg, "$t%d", ++regnum);
-            return op->reg;
-        }
+        int i;
+        for (i = 1; i <= regnum; i++)
+            if (opEqual(ops[i], op)) return regs[i];
+        ops[++regnum] = op;
+        return regs[regnum];
     }
     return "";
 }

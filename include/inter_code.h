@@ -16,7 +16,6 @@ typedef struct Operand {
         char *name;
     };
     char *text;
-    char *reg;
 } Operand;
 extern Operand *const CONST_ZERO;
 extern Operand *const CONST_ONE;

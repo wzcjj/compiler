@@ -20,7 +20,7 @@ Operand *newOperand(OperandKind kind) {
     static int cnt = 0;
     Operand *p = &operandsPool[cnt++];
     p->kind = kind;
-    p->reg = p->name = p->text = NULL;
+    p->name = p->text = NULL;
     return p;
 }
 

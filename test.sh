@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for((i=1;i<=4;i++));
+for((i=1;i<=2;i++));
 do
-    bin/parser testcase/3.${i}.c testout/3.${i}.txt
+    bin/parser testcase/4.${i}.c testout/4.${i}.txt
 done
