@@ -43,8 +43,9 @@ static char stringforconst[10];
 static void mipsRead();
 static void mipsWrite();
 static char *getReg(Operand*);
-static int argnum;
+static int paramnum = 0, argnum = 0;
 static Operand *regs[32] = { NULL };
+static Operand *args[8] = { NULL };
 
 void mipsInit() {
     printf("\
@@ -108,13 +109,22 @@ static void mipsTranslate(InterCode *ic) {
         printf(MIPS[kind], getReg(op1), getReg(res));
     }
     else if (kind == CALL) {
-        printf(MIPS[kind], getReg(op1), getReg(res));
+        printf("  addi $sp, $sp, -%d\n", (paramnum + 1) << 2);
         int i;
+        for (i = 0; i < paramnum; i++) {
+            printf("  sw $a%d, %d($sp)\n", i, i << 2);
+        }
+        printf("  sw $ra, %d($sp)\n", paramnum << 2);
         for (i = 0; i < argnum; i++) {
+            printf("  move $a%d, %s\n", i, getReg(args[i]));
+        }
+        printf(MIPS[kind], getReg(op1), getReg(res));
+        for (i = 0; i < paramnum; i++) {
             printf("  lw $a%d, %d($sp)\n", i, i << 2);
         }
-        printf("  lw $ra, %d($sp)\n", argnum << 2);
+        printf("  lw $ra, %d($sp)\n", paramnum << 2);
         printf("  addi $sp, $sp, 8\n");
+        argnum = 0;
     }
     else if (kind == GOTO_WITH_COND) {
         char *relop = ic->relop;
@@ -136,19 +146,14 @@ static void mipsTranslate(InterCode *ic) {
         else printf(MIPS[kind], getReg(res));
     }
     else if (kind == PARAM) {
-        regs[4 + argnum] = res;
-        argnum++;
+        regs[4 + paramnum] = res;
+        paramnum++;
     }
     else if (kind == ARG) {
-        printf("  addi $sp, $sp, -%d\n", (argnum + 1) << 2);
-        int i;
-        for (i = 0; i < argnum; i++) {
-            printf("  sw $a%d, %d($sp)\n", i, i << 2);
-        }
-        printf("  sw $ra, %d($sp)\n", argnum << 2);
+        args[argnum++] = res;
     }
     else if (kind == DEF_FUNCTION) {
-        argnum = 0;
+        paramnum = 0;
         printf(MIPS[kind], getReg(res));
     }
     else {
